@@ -1,4 +1,4 @@
-# Credentials
+# Credentials (`credentials.yml`)
 ## How to encrypt this file
 Make sure to be in the directory where the `vagrantfile` is and start the provisioning vm `bpro-provisioning-vm`:
 ```bash
