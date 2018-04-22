@@ -5,13 +5,15 @@ Initial setup for a Banana Pi Pro.
 testing:
     execute roles twice
     check every role on its own
+    check, if packages are installed in their own role and not from "common" (see motd, sudo)
 
 refactor regular expressions in "replace" and "lineinfile" modules
-purge ntpd, install ntp-client
+
     adapt ntp.conf of Gentoo
     create script for cronjob
 
 set cpu govenor to "conservative": /etc/default/cpufrequtils
+
 
 !! use "lynis" to test security and stuff !!
 
