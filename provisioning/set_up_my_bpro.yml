@@ -160,8 +160,8 @@
         WITH_LETS_ENCRYPT: "yes" }
 
     - { role: "purge_unnecessary_packages",
-        REMOVE_PACKAGES_IN_LIST: "yes",
-        PACKAGE_DELETE_LIST: ["nano", "vim-common", "vim-tiny"] }
+        PURGE_PACKAGES_IN_LIST: "yes",
+        PACKAGE_PURGE_LIST: ["nano", "vim-common", "vim-tiny"] }
 
   post_tasks:
     - name: update file database

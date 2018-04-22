@@ -22,9 +22,9 @@
     state: "absent"
   ignore_errors: "yes"
   with_items:
-    - "{{ PACKAGE_DELETE_LIST }}"
+    - "{{ PACKAGE_PURGE_LIST }}"
   when:
-    - REMOVE_PACKAGES_IN_LIST == "yes"
+    - PURGE_PACKAGES_IN_LIST == "yes"
   tags:
     - purge_unnecessary_packages
 
