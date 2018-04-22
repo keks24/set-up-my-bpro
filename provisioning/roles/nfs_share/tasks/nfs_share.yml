@@ -1,0 +1,118 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install network file system server (nfs-kernel-server)
+  package:
+    name:
+      - "nfs-kernel-server"
+      - "portmap"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  notify:
+    - handler_enable_nfs-kernel-server
+    - handler_restart_nfs-kernel-server
+  tags:
+    - nfs_share
+
+- name: deny access to nfs services by default
+  lineinfile:
+    path: "/etc/hosts.deny"
+    line: "rpcbind mountd nfsd statd lockd rquotad : ALL"
+  tags:
+    - nfs_share
+
+- name: allow access to nfs services for clients
+  lineinfile:
+    path: "/etc/hosts.allow"
+    line: "{{ item }}"
+  with_items:
+    - "rpcbind mountd nfsd statd lockd rquotad : 127.0.0.1 : allow"
+    - "rpcbind mountd nfsd statd lockd rquotad : {{ ALLOWED_IP_ADDRESS }} : allow"
+    - "rpcbind mountd nfsd statd lockd rquotad : ALL : deny"
+  tags:
+    - nfs_share
+
+- name: create shared directories
+  file:
+    path: "/media/{{ item }}/"
+    owner: "{{ USERNAME }}"
+    group: "{{ USERNAME }}"
+    mode: "0755"
+    state: "directory"
+  with_items:
+    - "BACKUP"
+    - "BANANAPI"
+  tags:
+    - nfs_share
+
+- name: create symlinks
+  file:
+    src: "{{ item.FILE_SRC }}/"
+    dest: "{{ item.FILE_DEST }}"
+    owner: "{{ item.FILE_OWNER }}"
+    group: "{{ item.FILE_GROUP }}"
+    mode: "0777"
+    state: "link"
+  with_items:
+      - { FILE_SRC: "/media/BACKUP", FILE_DEST: "/root/BACKUP", FILE_OWNER: "root", FILE_GROUP: "root" }
+      - { FILE_SRC: "/media/BANANAPI", FILE_DEST: "/root/BANANAPI", FILE_OWNER: "root", FILE_GROUP: "root" }
+      - { FILE_SRC: "/media/BACKUP", FILE_DEST: "/home/{{ USERNAME }}/BACKUP", FILE_OWNER: "{{ USERNAME }}", FILE_GROUP: "{{ USERNAME }}" }
+      - { FILE_SRC: "/media/BANANAPI", FILE_DEST: "/home/{{ USERNAME }}/BANANAPI", FILE_OWNER: "{{ USERNAME }}", FILE_GROUP: "{{ USERNAME }}" }
+  tags:
+    - nfs_share
+
+- name: enable access to shared directories
+  lineinfile:
+    path: "/etc/exports"
+    line: "{{ item }}"
+  with_items:
+    - "/media/BACKUP    {{ ALLOWED_IP_ADDRESS }}({{ NFS_OPTIONS }})"
+    - "/media/BANANAPI  {{ ALLOWED_IP_ADDRESS }}({{ NFS_OPTIONS }})"
+  notify:
+    - handler_reload_nfs-kernel-server
+    - handler_reexport_nfs-kernel-server
+  tags:
+    - nfs_share
+
+- name: mount hard drive partitions and add fstab entries
+  mount:
+    src: "{{ item.MOUNT_SRC }}"
+    path: "{{ item.MOUNT_PATH }}"
+    fstype: "{{ item.MOUNT_FSTYPE }}"
+    opts: "{{ item.MOUNT_OPTIONS }}"
+    dump: "{{ item.MOUNT_DUMP }}"
+    passno: "{{ item.MOUNT_PASSNO }}"
+    state: "mounted"
+  with_items:
+    - { MOUNT_SRC: 'UUID="{{ ansible_devices.sda.partitions.sda1.uuid }}"',
+        MOUNT_PATH: "/media/BACKUP",
+        MOUNT_FSTYPE: "ext4",
+        MOUNT_OPTIONS: "defaults,relatime",
+        MOUNT_DUMP: "0",
+        MOUNT_PASSNO: "2" }
+    - { MOUNT_SRC: 'UUID="{{ ansible_devices.sda.partitions.sda2.uuid }}"',
+        MOUNT_PATH: "/media/BANANAPI",
+        MOUNT_FSTYPE: "ext4",
+        MOUNT_OPTIONS: "defaults,relatime",
+        MOUNT_DUMP: "0",
+        MOUNT_PASSNO: "2" }
+  when:
+    - ansible_devices.sda.partitions.sda1.uuid == SDA1_UUID
+    - ansible_devices.sda.partitions.sda2.uuid == SDA2_UUID
+  tags:
+    - nfs_share

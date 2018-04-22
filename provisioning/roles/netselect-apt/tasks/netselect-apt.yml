@@ -1,0 +1,118 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install tool to find the fastest mirror (netselect-apt)
+  package:
+    name: "netselect-apt"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - netselect-apt
+
+- name: check, if fastest mirror has been already set
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/fastest_mirror_set"
+  register: "FASTEST_MIRROR_SET"
+  tags:
+    - netselect-apt
+
+- name: find fastest mirror
+  shell: "$(command -v netselect-apt) {{ CURRENT_STABLE_CODENAME | quote }} -n"
+  args:
+    chdir: "/tmp/"
+    creates: "/tmp/sources.list"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: save output of fastest mirror url as variable
+  shell: "$(command -v awk) 'NR == 2 { print $2 }' sources.list"
+  args:
+    chdir: "/tmp/"
+  register: "FASTEST_MIRROR"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: save variable as ansible fact
+  set_fact:
+    FASTEST_MIRROR: "{{ FASTEST_MIRROR.stdout }}"
+  run_once: "yes"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: adapt new mirror list
+  copy:
+    src: "/tmp/sources.list"
+    dest: "/etc/apt/"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    remote_src: "yes"
+    backup: "yes"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: enable security repository
+  lineinfile:
+    path: "/etc/apt/sources.list"
+    regexp: "# deb http://security.debian.org/ stable/updates main contrib non-free"
+    line: "deb http://security.debian.org/ {{ CURRENT_STABLE_CODENAME }}/updates main contrib non-free"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: enable other repositories
+  lineinfile:
+    path: "/etc/apt/sources.list"
+    line: "{{ item }}"
+    insertafter: "deb .* {{ CURRENT_STABLE_CODENAME }} main contrib non-free"
+  with_items:
+    - "deb {{ FASTEST_MIRROR }} {{ CURRENT_STABLE_CODENAME }}-backports main contrib non-free"
+    - "deb {{ FASTEST_MIRROR }} {{ CURRENT_STABLE_CODENAME }}-updates main contrib non-free"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: update package cache
+  package:
+    update_cache: "yes"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/fastest_mirror_set"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt

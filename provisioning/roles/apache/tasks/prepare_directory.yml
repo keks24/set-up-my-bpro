@@ -1,0 +1,103 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: create domain home directory
+  file:
+    path: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    state: "directory"
+  tags:
+    - apache
+
+- name: create subdirectories
+  file:
+    path: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/{{ item.FILE_PATH }}/"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "{{ item.FILE_MODE }}"
+    state: "directory"
+  with_items:
+    - { FILE_PATH: ".ssh", FILE_MODE: "0700" }
+    - { FILE_PATH: "etc", FILE_MODE: "0755" }
+    - { FILE_PATH: "etc/apache2", FILE_MODE: "0755" }
+    - { FILE_PATH: "etc/apache2/conf-available", FILE_MODE: "0755" }
+    - { FILE_PATH: "etc/apache2/conf-enabled", FILE_MODE: "0755" }
+    - { FILE_PATH: "etc/ssl", FILE_MODE: "0755" }
+    - { FILE_PATH: "etc/ssl/certs", FILE_MODE: "0755" }
+    - { FILE_PATH: "htdocs", FILE_MODE: "0755" }
+    - { FILE_PATH: "logs", FILE_MODE: "0755" }
+    - { FILE_PATH: "private", FILE_MODE: "0755" }
+  tags:
+    - apache
+
+- name: create file for authorised keys
+  file:
+    path: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/.ssh/authorized_keys"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0600"
+    state: "touch"
+  tags:
+    - apache
+
+- name: create file for basic authentication passwords
+  file:
+    path: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/etc/apache2/htpasswd"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0644"
+    state: "touch"
+  tags:
+    - apache
+
+- name: copy readme file with directory explanations
+  template:
+    src: "templates/var/www/domain_name/README.j2"
+    dest: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/README"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  tags:
+    - apache
+
+- name: copy example vhost configuration file
+  template:
+    src: "templates/var/www/domain_name/etc/apache2/conf-available/basic_authentication.conf.example.j2"
+    dest: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/etc/apache2/conf-available/basic_authentication.conf.example"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0644"
+  notify:
+    - handler_reload_apache2
+    - handler_check_apache2
+  tags:
+    - apache
+
+- name: copy example vhost configuration file
+  template:
+    src: "templates/var/www/domain_name/etc/apache2/conf-available/ssl.conf.example.j2"
+    dest: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/etc/apache2/conf-available/ssl.conf.example"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0644"
+  notify:
+    - handler_reload_apache2
+    - handler_check_apache2
+  tags:
+    - apache

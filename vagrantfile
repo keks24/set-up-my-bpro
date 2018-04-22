@@ -1,0 +1,85 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$provision_vm_script = <<SCRIPT
+# install pip in order to install ansible via pip (required for 'ansible.install_mode = "pip_args_only"')
+apt-get -y install python-pip
+SCRIPT
+
+$development_vm_script = <<SCRIPT
+# add user "vagrant" to group "ssh" to not get locked out when hardening sshd
+usermod -aG ssh vagrant
+SCRIPT
+
+# copied and modified from: https://github.com/FibreFoX/vagrant-ansible-multi-vm
+Vagrant.configure("2") do |config|
+    config.vm.box = "debian/stretch64"
+    # "fmode=600" is necessary for the private key file. see ansible inventory file
+    config.vm.synced_folder ".", "/vagrant", type: "virtualbox", owner: "vagrant", mount_options: ["dmode=755,fmode=600"]
+
+    if Vagrant.has_plugin?("vagrant-vbguest")
+        config.vbguest.auto_update = "true"
+        config.vbguest.no_remote = "true"
+    end
+
+    config.vm.box_check_update = "true"
+
+    config.vm.define "bpro-development-vm" do |vmConfig|
+        vmConfig.vm.provision "shell", inline: $development_vm_script
+        vmConfig.vm.synced_folder ".", "/vagrant", disabled: true
+        vmConfig.vbguest.auto_update = false
+        vmConfig.vm.network "private_network", ip: "192.168.100.100", virtualbox__intnet: "development_network"
+        vmConfig.vm.network "private_network", ip: "172.28.128.9"
+        #vmConfig.vm.network "private_network", type: "dhcp"
+        #vmConfig.vm.network "forwarded_port", guest: "80", host: "8080"
+
+        vmConfig.vm.provider "virtualbox" do |vb|
+            vb.memory = "8192"
+            vb.cpus = "4"
+            vb.name = "bpro-development-vm"
+            vb.linked_clone = "true"
+        end
+    end
+
+    config.vm.define "bpro-provision-vm" do |vmConfig|
+        vmConfig.vm.provision "shell", inline: $provision_vm_script
+        vmConfig.vm.hostname = "bpro-provision-vm"
+        vmConfig.vm.network "private_network", ip: "192.168.100.99", virtualbox__intnet: "development_network"
+        vmConfig.vm.provider "virtualbox" do |vb|
+            vb.memory = "512"
+            vb.cpus = "1"
+            vb.name = "bpro-provision-vm"
+            vb.linked_clone = "true"
+        end
+
+        vmConfig.vm.provision "ansible_local" do |ansible|
+            ansible.playbook = "provisioning/set_up_my_bpro.yml"
+            ansible.inventory_path = "provisioning/inventory.yml"
+            ansible.config_file = "provisioning/ansible.cfg"
+            # for productive use
+            #ansible.install_mode = "pip"
+            #ansible.version = "2.4.2.0"
+            # when using ansible devel version (requires "$provisioning_script" call)
+            ansible.install_mode = "pip_args_only"
+            ansible.pip_args = "-r /vagrant/requirements.txt"
+
+            #ansible.tags = ""
+            ansible.limit = "development"
+            ansible.verbose = false
+        end
+
+        # deploy to live by executing: 'deploy="live" vagrant provision'
+        #if ENV['deploy'] == "live"
+        #    vmConfig.vm.provision "ansible_local" do |ansible|
+        #        ansible.playbook = "provisioning/set_up_my_bpro.yml"
+        #        ansible.inventory_path = "provisioning/inventory.yml"
+        #        ansible.config_file = "provisioning/ansible.cfg"
+        #        ansible.install_mode = "pip"
+        #        #ansible.version = "2.4.2.0"
+        #        #ansible.tags = ""
+        #        ansible.limit = "live"
+        #        ansible.verbose = false
+        #    end
+        #end
+    end
+end

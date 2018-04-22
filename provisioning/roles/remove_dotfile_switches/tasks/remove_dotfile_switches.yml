@@ -1,0 +1,49 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: list directory content
+  find:
+    paths: "/usr/local/etc/.ansible_dotfile_switches/"
+    file_type: "file"
+    recurse: "yes"
+  register: "DOTFILE_SWITCHES_DIRECTORY_CONTENT"
+  when:
+    - REMOVE_ALL == "yes"
+  tags:
+    - remove_dotfile_switches
+
+- name: remove directory content
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items:
+    - "{{ DOTFILE_SWITCHES_DIRECTORY_CONTENT.files }}"
+  when:
+    - REMOVE_ALL == "yes"
+  tags:
+    - remove_dotfile_switches
+
+- name: remove files in list
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/{{ item }}"
+    state: "absent"
+  with_items:
+    - "{{ FILE_DELETE_LIST }}"
+  when:
+    - REMOVE_FILES_IN_LIST == "yes"
+  tags:
+    - remove_dotfile_switches

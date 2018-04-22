@@ -1,0 +1,105 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install alternative shell (zsh)
+  package:
+    name: "zsh"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - zsh
+
+- name: clone grml's configuration repository
+  git:
+    repo: "https://github.com/grml/grml-etc-core.git"
+    dest: "/usr/local/share/git/grml-etc-core/"
+    force: "yes"
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/grml-etc-core/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - zsh
+
+- name: copy global zsh configuration files
+  copy:
+    src: "/usr/local/share/git/grml-etc-core/etc/zsh/{{ item }}"
+    dest: "/etc/zsh/"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    remote_src: "yes"
+  with_items:
+    - "keephack"
+    - "zlogin"
+    - "zlogout"
+    - "zprofile"
+    - "zshenv"
+    - "zshrc"
+  tags:
+    - zsh
+
+- name: copy global custom zsh configuration file
+  copy:
+    src: "files/etc/zsh/zshrc.local"
+    dest: "/etc/zsh/"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  tags:
+    - zsh
+
+- name: create directory for tab completions
+  file:
+    path: "/usr/local/share/{{ item }}/"
+    owner: "root"
+    group: "staff"
+    mode: "0755"
+    state: "directory"
+  with_items:
+    - "zsh"
+    - "zsh/site-functions"
+  tags:
+    - zsh
+
+- name: add zsh configuration file to user skeleton
+  copy:
+    src: "files/etc/skel/zshrc"
+    dest: "/etc/skel/.zshrc"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  tags:
+    - zsh
+
+- name: set zsh as default for new users
+  replace:
+    path: "{{ item.REPLACE_PATH }}"
+    regexp: "{{ item.REPLACE_REGEXP }}"
+    replace: "{{ item.REPLACE_REPLACE }}"
+  with_items:
+    - { REPLACE_PATH: "/etc/default/useradd", REPLACE_REGEXP: "(.)?.*SHELL=.*", REPLACE_REPLACE: "SHELL=/bin/zsh" }
+    - { REPLACE_PATH: "/etc/adduser.conf", REPLACE_REGEXP: "(.)?.*DSHELL=.*", REPLACE_REPLACE: "DSHELL=/bin/zsh" }
+  tags:
+    - zsh

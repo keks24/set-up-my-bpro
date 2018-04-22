@@ -1,0 +1,46 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: create group "{{ APACHE_USERNAME }}"
+  group:
+    name: "{{ APACHE_USERNAME }}"
+    state: "present"
+  tags:
+    - apache
+
+# do not create a home directory with "user" module to avoid copying unnecessary configuration files from "/etc/skel"
+- name: create user "{{ APACHE_USERNAME }}" with 20 characters random password
+  user:
+    name: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    password: "{{ lookup('password', '/home/vagrant/credentials/password_sftp_{{ APACHE_USERNAME }} chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
+    shell: "/bin/bash"
+    home: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/"
+    update_password: "on_create"
+    createhome: "no"
+    state: "present"
+  tags:
+    - apache
+
+- name: make websites accessable for apache
+  user:
+    name: "www-data"
+    groups: "{{ APACHE_USERNAME }}"
+    append: "yes"
+    state: "present"
+  tags:
+    - apache

@@ -1,0 +1,64 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: check, if host keys has been already generated
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/host_keys_generated"
+  register: "HOST_KEYS_GENERATED"
+  tags:
+    - harden_sshd
+
+- name: remove host keys
+  file:
+    path: "/etc/ssh/{{ item }}"
+    state: "absent"
+  with_items:
+    - "ssh_host_rsa_key"
+    - "ssh_host_rsa_key.pub"
+    - "ssh_host_ecdsa_key"
+    - "ssh_host_ecdsa_key.pub"
+    - "ssh_host_ed25519_key"
+    - "ssh_host_ed25519_key.pub"
+  when:
+    - HOST_KEYS_GENERATED.stat.exists == false
+  tags:
+    - harden_sshd
+
+- name: generate host keys
+  shell: "$(command -v ssh-keygen) -qt {{ item.SHELL_SSH_KEY_TYPE | quote }} -b {{ item.SHELL_SSH_KEY_BITS | quote }} -f {{ item.SHELL_SSH_KEY_FILE | quote }} -N ''"
+  args:
+    chdir: "/etc/ssh/"
+  with_items:
+    - { SHELL_SSH_KEY_TYPE: "rsa", SHELL_SSH_KEY_BITS: "8192", SHELL_SSH_KEY_FILE: "ssh_host_rsa_key" }
+    - { SHELL_SSH_KEY_TYPE: "ecdsa", SHELL_SSH_KEY_BITS: "521", SHELL_SSH_KEY_FILE: "ssh_host_ecdsa_key" }
+    - { SHELL_SSH_KEY_TYPE: "ed25519", SHELL_SSH_KEY_BITS: "256", SHELL_SSH_KEY_FILE: "ssh_host_ed25519_key" }
+  when:
+    - HOST_KEYS_GENERATED.stat.exists == false
+  tags:
+    - harden_sshd
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/host_keys_generated"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - HOST_KEYS_GENERATED.stat.exists == false
+  tags:
+    - harden_sshd

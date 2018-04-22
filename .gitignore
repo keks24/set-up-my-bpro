@@ -1,0 +1,11 @@
+# ansible
+## ignore ansible retry files
+*.retry
+## ignore ansible vault password file
+.vault_pass
+## ignore credentials file
+provisioning/group_vars/credentials.yml
+
+# vagrant
+## ignore vm configuration files
+.vagrant

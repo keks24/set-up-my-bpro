@@ -1,0 +1,32 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+# apt module
+PACKAGE_STATE: "latest"
+CACHE_VALID_TIME: "86400"
+DEFAULT_RELEASE: "{{ ansible_lsb.codename }}-backports"
+
+# gathered from ansible facts
+# system information
+## for make: cpus (core sockets multiplied by threads)+1
+# does not work
+# fatal: [bpro-development-vm]: FAILED! => {"msg": "An unhandled exception occurred while templating '{{ ansible_processor_vcpus+1 | int is abs }}'. Error was a <type 'exceptions.AttributeError'>, original message: 'int' object has no attribute 'startswith'"}
+#CPUS: "{{ ansible_processor_vcpus+1 | int is abs }}"
+CPUS: "{{ ansible_processor_vcpus }}"
+
+# current debian stable codename
+CURRENT_STABLE_CODENAME: "{{ ansible_lsb.codename }}"

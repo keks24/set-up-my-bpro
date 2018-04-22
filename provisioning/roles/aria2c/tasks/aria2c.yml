@@ -1,0 +1,185 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install lightweight download utility (aria2)
+  package:
+    name: "aria2"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  notify:
+    - handler_enable_aria2c
+    - handler_restart_aria2c
+  tags:
+    - aria2c
+
+# no "chars=punctuation" to avoid backslashes
+- name: generate random auth token
+  set_fact:
+    RPC_SECRET: "{{ lookup('password', '/home/vagrant/credentials/aria2_rpc_secret chars=ascii_letters,digits,hexdigits') }}"
+  run_once: "yes"
+  tags:
+    - aria2c
+
+- name: copy systemd service file
+  template:
+    src: "templates/etc/systemd/system/aria2c.service.j2"
+    dest: "/etc/systemd/system/aria2c.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when:
+    - USE_SYSTEMD_SERVICE_FILE == "yes"
+  tags:
+    - aria2c
+
+- name: copy init file
+  template:
+    src: "templates/etc/init.d/aria2c.j2"
+    dest: "/etc/init.d/aria2c"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when:
+    - USE_SYSTEMD_SERVICE_FILE == "no"
+  tags:
+    - aria2c
+
+- name: prepare files and directories
+  file:
+    path: "{{ item.FILE_PATH }}"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "{{ item.FILE_MODE }}"
+    state: "{{ item.FILE_STATE }}"
+  with_items:
+    - { FILE_PATH: "/var/log/aria2/", FILE_MODE: "0755", FILE_STATE: "directory" }
+    - { FILE_PATH: "/var/log/aria2/aria2c.log", FILE_MODE: "0644", FILE_STATE: "touch" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/etc/aria2/", FILE_MODE: "0755", FILE_STATE: "directory" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/htdocs/.downloads/", FILE_MODE: "0755", FILE_STATE: "directory" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/private/.aria2_session.gz", FILE_MODE: "0644", FILE_STATE: "touch" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/private/.dht.dat", FILE_MODE: "0644", FILE_STATE: "touch" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/private/.dht6.dat", FILE_MODE: "0644", FILE_STATE: "touch" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/private/.netrc", FILE_MODE: "0600", FILE_STATE: "touch" }
+  tags:
+    - aria2c
+
+- name: copy aria2c global configuration file
+  template:
+    src: "templates/var/www/domain_name/etc/aria2/aria2.conf.j2"
+    dest: "/var/www/{{ DOMAIN_NAME }}/etc/aria2/aria2.conf"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0600"
+  notify:
+    - handler_restart_aria2c
+  tags:
+    - aria2c
+
+- name: set up logrotate
+  template:
+    src: "templates/etc/logrotate.d/aria2.j2"
+    dest: "/etc/logrotate.d/aria2"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0644"
+  tags:
+    - aria2c
+
+- name: clone webui-aria2 repository
+  git:
+    repo: "https://github.com/ziahamza/webui-aria2.git"
+    dest: "/usr/local/share/git/webui-aria2/"
+    force: "yes"
+  tags:
+    - aria2c
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/webui-aria2/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - aria2c
+
+- name: check, if webui-aria2 content has been already copied
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/webui_aria2_repository_content_copied"
+  register: "WEBUI_ARIA2_REPOSITORY_CONTENT"
+  tags:
+    - aria2c
+
+- name: copy repository content
+  shell: "$(command -v cp) -R * /var/www/{{ DOMAIN_NAME | quote }}/htdocs/"
+  args:
+    chdir: "/usr/local/share/git/webui-aria2/"
+    creates: "/var/www/{{ DOMAIN_NAME }}/htdocs/LICENCE"
+  when:
+    - WEBUI_ARIA2_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - aria2c
+
+- name: correct owner and group rights
+  file:
+    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - aria2c
+
+- name: set auth token in configuration file
+  replace:
+    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
+    regexp: "(.){2}?.*token:.*"
+    replace: "    token: '{{ RPC_SECRET }}'"
+  when:
+    - WEBUI_ARIA2_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - aria2c
+
+- name: secure configuration file
+  file:
+    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0640"
+  tags:
+    - aria2c
+
+- name: set direct url in configuration file
+  replace:
+    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
+    regexp: "(.){2}?.*directURL:.*"
+    replace: "  directURL: 'http://{{ DOMAIN_NAME }}/.downloads/'"
+  tags:
+    - aria2c
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/webui_aria2_repository_content_copied"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - WEBUI_ARIA2_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - aria2c

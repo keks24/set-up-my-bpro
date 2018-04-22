@@ -1,0 +1,127 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install mail transfer agent (postfix)
+  package:
+    name: "postfix"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  notify:
+    - handler_enable_postfix
+    - handler_restart_postfix
+  tags:
+    - postfix
+
+- name: connect postfix with smtp server
+  lineinfile:
+    path: "/etc/postfix/main.cf"
+    regexp: "{{ item.REPLACE_REGEXP }}"
+    line: "{{ item.REPLACE_LINE }}"
+    validate: "/usr/sbin/postfix check %s"
+  with_items:
+    - { REPLACE_REGEXP: "myhostname =.*", REPLACE_LINE: "myhostname = {{ HOSTNAME }}" }
+    - { REPLACE_REGEXP: "relayhost =.*", REPLACE_LINE: "relayhost = [{{ SMTP_FQDN }}]:{{ SMTP_PORT }}" }
+    - { REPLACE_REGEXP: "smtp_use_tls =.*", REPLACE_LINE: "smtp_use_tls = yes" }
+    - { REPLACE_REGEXP: "smtp_sasl_auth_enable =.*", REPLACE_LINE: "smtp_sasl_auth_enable = yes" }
+    - { REPLACE_REGEXP: "smtp_sasl_security_options =.*", REPLACE_LINE: "smtp_sasl_security_options = noanonymous" }
+    - { REPLACE_REGEXP: "smtp_sasl_password_maps =.*", REPLACE_LINE: "smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd" }
+    - { REPLACE_REGEXP: "smtp_tls_security_level =.*", REPLACE_LINE: "smtp_tls_security_level = encrypt" }
+    - { REPLACE_REGEXP: "smtp_tls_CAfile =.*", REPLACE_LINE: "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt" }
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: do not include headers when sending e-mails
+  lineinfile:
+    path: "/etc/postfix/main.cf"
+    regexp: "{{ item.LINEINFILE_REGEXP }}"
+    line: "{{ item.LINEINFILE_LINE }}"
+    validate: "/usr/sbin/postfix check %s"
+  with_items:
+    - { LINEINFILE_REGEXP: "header_checks =.*", LINEINFILE_LINE: "header_checks = regexp:/etc/postfix/header_checks" }
+    - { LINEINFILE_REGEXP: "mime_header_checks =.*", LINEINFILE_LINE: "mime_header_checks = regexp:/etc/postfix/header_checks" }
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: copy header configuration file
+  template:
+    src: "templates/etc/postfix/header_checks.j2"
+    dest: "/etc/postfix/header_checks"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: create hash database file
+  shell: "$(command -v postmap) header_checks"
+  args:
+    chdir: "/etc/postfix/"
+    creates: "header_checks.db"
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: copy smtp credentials file
+  template:
+    src: "templates/etc/postfix/sasl/sasl_passwd.j2"
+    dest: "/etc/postfix/sasl/sasl_passwd"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: create hash database file
+  shell: "$(command -v postmap) sasl_passwd"
+  args:
+    chdir: "/etc/postfix/sasl/"
+    creates: "sasl_passwd.db"
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix
+
+- name: secure hash database file
+  file:
+    path: "/etc/postfix/sasl/{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  with_items:
+    - "sasl_passwd"
+    - "sasl_passwd.db"
+  notify:
+    - handler_reload_postfix
+    - handler_check_postfix
+  tags:
+    - postfix

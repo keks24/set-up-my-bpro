@@ -1,0 +1,77 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+### BEGIN INIT INFO
+# Provides:          aria2
+# Required-Start:    $network $local_fs $remote_fs
+# Required-Stop::    $network $local_fs $remote_fs
+# Should-Start:      $all
+# Should-Stop:       $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Aria2 - Download Manager
+### END INIT INFO
+
+NAME="aria2c"
+ARIA2C=$(command -v ${NAME})
+PIDFILE="/var/run/${NAME}.pid"
+CONF="/var/www/{{ DOMAIN_NAME }}/etc/aria2/aria2.conf"
+ARGS="--conf-path=${CONF} --enable-rpc=true --rpc-allow-origin-all=true --rpc-listen-all=true --rpc-listen-port=6800 --rpc-secret={{ RPC_SECRET }}"
+USER="{{ APACHE_USERNAME }}"
+GROUP="{{ APACHE_USERNAME }}"
+
+if ! [[ -f ${ARIA2C} ]]
+then
+    echo -e "\e[01;31mcould not find binary file: ${ARIA2C}\e[0m"
+    exit 0
+fi
+
+if ! [[ -f ${CONF} ]]
+then
+    echo -e "\e[01;31mcould not find configuration file: ${CONF}\e[0m"
+    exit 0
+fi
+
+source "/lib/lsb/init-functions"
+
+echo "${PIDFILE}"
+
+case "$1" in
+    start)
+        log_daemon_msg "starting ${NAME}" "${NAME}"
+        $(command -v start-stop-daemon) --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
+        ;;
+    stop)
+        log_daemon_msg "stopping ${NAME}" "${NAME}"
+        $(command -v start-stop-daemon) --stop --quiet --pidfile ${PIDFILE}
+        ;;
+    restart)
+        log_daemon_msg "restarting ${NAME}" "${NAME}"
+        $(command -v start-stop-daemon) --stop --retry 5 --quiet --pidfile ${PIDFILE}
+        $(command -v start-stop-daemon) --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
+        ;;
+    status)
+        status_of_proc -p ${PIDFILE} ${ARIA2C} ${NAME} && exit 0 || exit ${?}
+        ;;
+    *)
+        log_action_msg "usage: /etc/init.d/aria2c {start|stop|restart|status}"
+        exit 2
+        ;;
+esac
+
+exit 0

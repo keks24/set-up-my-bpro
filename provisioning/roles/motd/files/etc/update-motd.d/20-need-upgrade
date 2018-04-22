@@ -1,0 +1,36 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+if [[ $(command -v apt-get 2>/dev/null) ]]
+then
+    upgradeable_package_count=$($(command -v apt-get) -s -qq upgrade | awk '{ print $2 }' | sort -u | wc -l)
+    removable_package_count=$($(command -v apt-get) -s -qq autoremove | awk '{ print $2 }' | sort -u | wc -l)
+
+    if (( ${removable_package_count} > 0 ))
+    then
+        echo -e "\e[01;33m[${removable_package_count}] dependency packages are not needed anymore! (execute as root: $(command -v apt-get) autoremove)\e[0m"
+    fi
+
+    if (( ${upgradeable_package_count} > 0 ))
+    then
+        echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: $(command -v apt-get) upgrade)\e[0m"
+    fi
+else
+    echo -e "\e[01;31mcould not find command 'apt-get'.\e[0m"
+    exit 1
+fi

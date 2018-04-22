@@ -1,0 +1,99 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install anti-virus (clamav)
+  package:
+    name:
+      - "clamav"
+      - "clamav-daemon"
+      - "clamav-docs"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  notify:
+    - handler_enable_clamav-daemon
+    - handler_enable_clamav-freshclam
+    - handler_restart_clamav-daemon
+    - handler_restart_clamav-freshclam
+  tags:
+    - clamav
+
+- name: install unofficial virus signature databases
+  package:
+    name: "clamav-unofficial-sigs"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - clamav
+
+# has to be started in the background otherwise it hangs up
+- name: download unofficial virus signature databases
+  shell: "$(command -v clamav-unofficial-sigs) &"
+  notify:
+    - handler_restart_clamav-daemon
+  tags:
+    - clamav
+
+- name: create directory for infected files
+  file:
+    path: "{{ INFECTED_FILES_DIRECTORY }}"
+    owner: "{{ CLAMAV_USERNAME }}"
+    group: "{{ CLAMAV_USERNAME }}"
+    mode: "0750"
+    state: "directory"
+  tags:
+    - clamav
+
+- name: copy shell script to scan for viruses
+  template:
+    src: "templates/root/cronjobs/clamscan.sh.j2"
+    dest: "/root/.cronjobs/clamscan.sh"
+    owner: "root"
+    group: "root"
+    mode: "0744"
+  tags:
+    - clamav
+
+- name: set up cronjobs for root user
+  cron:
+    name: "{{ item.CRONJOB_NAME }}"
+    minute: "{{ item.CRONJOB_MINUTE }}"
+    hour: "{{ item.CRONJOB_HOUR }}"
+    day: "{{ item.CRONJOB_DAY }}"
+    month: "{{ item.CRONJOB_MONTH }}"
+    weekday: "{{ item.CRONJOB_WEEKDAY }}"
+    job: "{{ item.CRONJOB_JOB }}"
+    user: "root"
+    state: "present"
+  with_items:
+    - { CRONJOB_NAME: "update unofficial clamav virus signature database every day",
+        CRONJOB_MINUTE: "0",
+        CRONJOB_HOUR: "5",
+        CRONJOB_DAY: "*",
+        CRONJOB_MONTH: "*",
+        CRONJOB_WEEKDAY: "*",
+        CRONJOB_JOB: "$(command -v clamav-unofficial-sigs)" }
+    - { CRONJOB_NAME: "scan for viruses on every friday",
+        CRONJOB_MINUTE: "0",
+        CRONJOB_HOUR: "6",
+        CRONJOB_DAY: "*",
+        CRONJOB_MONTH: "*",
+        CRONJOB_WEEKDAY: "7",
+        CRONJOB_JOB: "/root/.cronjobs/clamscan.sh" }
+  tags:
+    - clamav

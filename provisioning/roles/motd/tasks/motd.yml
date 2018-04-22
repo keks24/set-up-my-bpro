@@ -1,0 +1,181 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install tools to get system information
+  package:
+    name:
+      - "neofetch"
+      - "needrestart"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - motd
+
+- name: check, if static motd has been already set
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/static_motd_content_set"
+  register: "STATIC_MOTD_CONTENT_SET"
+  tags:
+    - motd
+
+- name: empty static motd
+  copy:
+    content: ""
+    dest: "/etc/motd"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when:
+    - STATIC_MOTD_CONTENT_SET.stat.exists == false
+    - BACKUP_OLD_STATIC_MOTD == "no"
+  tags:
+    - motd
+
+- name: rename directory content
+  shell: "$(command -v mv) motd motd.bak"
+  args:
+    chdir: "/etc/"
+    creates: "/etc/motd.bak"
+  when:
+    - STATIC_MOTD_CONTENT_SET.stat.exists == false
+    - BACKUP_OLD_STATIC_MOTD == "yes"
+  tags:
+    - motd
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/static_motd_content_set"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  tags:
+    - motd
+
+- name: check, if dynamic motd has been already set
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/dynamic_motd_content_set"
+  register: "DYNAMIC_MOTD_CONTENT_SET"
+  tags:
+    - motd
+
+- name: list directory content
+  find:
+    paths: "/etc/update-motd.d/"
+    file_type: "any"
+    recurse: "yes"
+  register: "DYNAMIC_MOTD_DIRECTORY_CONTENT"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+  tags:
+    - motd
+
+- name: remove directory content
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items:
+    - "{{ DYNAMIC_MOTD_DIRECTORY_CONTENT.files }}"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+    - BACKUP_OLD_DYNAMIC_MOTD == "no"
+  tags:
+    - motd
+
+- name: rename directory content
+  shell: "$(command -v mv) {{ item.path | quote }} {{ item.path | quote }}.bak"
+  with_items:
+    - "{{ DYNAMIC_MOTD_DIRECTORY_CONTENT.files }}"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+    - BACKUP_OLD_DYNAMIC_MOTD == "yes"
+  tags:
+    - motd
+
+- name: check, if armbian motd configuration file exists
+  stat:
+    path: "/etc/default/armbian-motd"
+  register: "ARMBIAN_MOTD_SETTINGS"
+  tags:
+    - motd
+
+- name: disable armbian dynamic motd
+  replace:
+    path: "/etc/default/armbian-motd"
+    regexp: "(.)?.*MOTD_DISABLE=.*"
+    replace: 'MOTD_DISABLE="header sysinfo tips updates armbian-config point-to-faq'
+  when:
+    - ARMBIAN_MOTD_SETTINGS.stat.exists == true
+  tags:
+    - motd
+
+# files are read in alphabetical order
+# files must not have any suffixes!
+# files must not have any underscores!
+- name: copy motd shell scripts
+  copy:
+    src: "files/etc/update-motd.d/{{ item }}"
+    dest: "/etc/update-motd.d/"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  with_items:
+    - "10-neofetch"
+    - "20-need-upgrade"
+    - "30-restart-daemons"
+    - "40-need-reboot"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+  tags:
+    - motd
+
+- name: create configuration directory
+  file:
+    path: "/usr/local/etc/neofetch/"
+    owner: "root"
+    group: "staff"
+    mode: "0755"
+    state: "directory"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+  tags:
+    - motd
+
+- name: copy configuration file
+  copy:
+    src: "files/usr/local/etc/neofetch/config.conf"
+    dest: "/usr/local/etc/neofetch/"
+    owner: "root"
+    group: "staff"
+    mode: "0755"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+  tags:
+    - motd
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/dynamic_motd_content_set"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - DYNAMIC_MOTD_CONTENT_SET.stat.exists == false
+  tags:
+    - motd

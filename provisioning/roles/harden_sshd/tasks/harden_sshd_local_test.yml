@@ -1,0 +1,95 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: check, if sshd settings has been already set
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_local_test_set"
+  register: "SSHD_SETTINGS_LOCAL_TEST_SET"
+  tags:
+    - harden_sshd
+
+- name: generate random ssh port
+  set_fact:
+    SSH_PORT_NUMBER: "{{ 49151 | random(start=1024) }}"
+  run_once: "yes"
+  when:
+    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+  tags:
+    - harden_sshd
+
+- name: save new ssh port number
+  local_action:
+    module: "copy"
+    content: |
+      {{ SSH_PORT_NUMBER }}
+    dest: "/home/vagrant/new_ssh_port_local_test"
+    owner: "vagrant"
+    group: "vagrant"
+    mode: "0644"
+  when:
+    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: change sshd default settings
+  replace:
+    path: "/etc/ssh/sshd_config"
+    regexp: "{{ item.REPLACE_REGEXP }}"
+    replace: "{{ item.REPLACE_REPLACE }}"
+    validate: "/usr/sbin/sshd -t -f %s"
+  with_items:
+    - { REPLACE_REGEXP: "(.)?.*Port.*[0-9]{1,5}", REPLACE_REPLACE: "#Port {{ SSH_PORT_NUMBER }}" }
+    - { REPLACE_REGEXP: "(.)?.*LoginGraceTime.*", REPLACE_REPLACE: "LoginGraceTime 30" }
+    - { REPLACE_REGEXP: "(.)?.*PermitRootLogin.*(forced-commands-only|no|prohibit-password|without-password|yes)$", REPLACE_REPLACE: "PermitRootLogin {{ PERMIT_ROOT_LOGIN }}" }
+    - { REPLACE_REGEXP: "(.)?.*ClientAliveInterval.*[0-9]*$", REPLACE_REPLACE: "ClientAliveInterval 300" }
+    - { REPLACE_REGEXP: "(.)?.*ClientAliveCountMax.*[0-9]*$", REPLACE_REPLACE: "ClientAliveCountMax 0" }
+  when:
+    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: only allow users in group list to log in
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    line: "AllowGroups {{ item }}"
+    insertbefore: "LoginGraceTime 30"
+    validate: "/usr/sbin/sshd -t -f %s"
+  with_items:
+    - "{{ ALLOW_GROUP_LIST }}"
+  when:
+    - SET_ALLOW_GROUPS_IN_LIST == "yes"
+    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_local_test_set"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+  tags:
+    - harden_sshd

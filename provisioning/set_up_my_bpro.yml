@@ -1,0 +1,222 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- hosts: "development"
+  pre_tasks:
+    - name: check, if credentials file exists
+      local_action:
+        module: "stat"
+        path: "/vagrant/provisioning/group_vars/credentials.yml"
+      register: "CREDENTIALS"
+      failed_when: "CREDENTIALS.stat.exists == false"
+      tags:
+        - pre_tasks
+
+    - include_vars: "/vagrant/provisioning/group_vars/credentials.yml"
+      when:
+        - CREDENTIALS.stat.exists == true
+      tags:
+        - pre_tasks
+
+    - name: upgrade installed packages
+      package:
+        upgrade: "dist"
+        update_cache: "yes"
+        cache_valid_time: "{{ CACHE_VALID_TIME }}"
+      tags:
+        - pre_tasks
+
+          # substitute root password with an exclamation mark
+          #- name
+
+  roles:
+    - { role: "remove_dotfile_switches",
+        REMOVE_ALL: "no",
+        REMOVE_FILES_IN_LIST: "no",
+        FILE_DELETE_LIST: ["", ""] }
+
+    - { role: "hostname",
+        HOSTNAME: "bananapi",
+        DOMAIN_NAMES: "bananapi.local" }
+
+    - "tmpfs"
+
+    - { role: "sudo",
+        USERNAME: "pi",
+        SUDO_USER: "yes",
+        RESTRICT_SU: "yes" }
+
+    - { role: "harden_sshd",
+        PERMIT_ROOT_LOGIN: "no",
+        USERNAME: "pi",
+        SET_ALLOW_GROUPS_IN_LIST: "yes",
+        ALLOW_GROUP_LIST: ["ssh"],
+        LOCAL_TEST: "yes" }
+
+    - "netselect-apt"
+
+    - "common"
+
+    - { role: "fail2ban",
+        IGNORE_IP_ADDRESS: "{{ VAULT_SERVER_NET_IP_ADDRESS }}",
+        DEFAULT_BAN_TIME: "86400",
+        DEFAULT_FIND_TIME: "3600" }
+
+    - { role: "clamav",
+        INFECTED_FILES_DIRECTORY: "/usr/local/etc/clamav/infected_files/" }
+
+    - { role: "ssh_banner",
+        FONT_NAME: "slant",
+        BANNER_TEXT: "{{ VAULT_DDCLIENT_DYN_DNS_FQDN }}" }
+
+    - { role: "motd",
+        BACKUP_OLD_STATIC_MOTD: "no",
+        BACKUP_OLD_DYNAMIC_MOTD: "no" }
+
+    - { role: "unattended-upgrades",
+        RECIPIENT_EMAIL_ADDRESS: "{{ VAULT_RECIPIENT_EMAIL_ADDRESS }}",
+        HOSTNAME: "{{ VAULT_POSTFIX_HOSTNAME }}",
+        SMTP_FQDN: "{{ VAULT_POSTFIX_SMTP_FQDN }}",
+        SMTP_PORT: "{{ VAULT_POSTFIX_SMTP_PORT }}",
+        RELAY_EMAIL_ADDRESS: "{{ VAULT_POSTFIX_RELAY_EMAIL_ADDRESS }}",
+        RELAY_EMAIL_PASSWORD: "{{ VAULT_POSTFIX_RELAY_EMAIL_PASSWORD }}" }
+
+    - { role: "neovim",
+        USERNAME: "root" }
+
+    - { role: "neovim",
+        USERNAME: "pi" }
+
+    - { role: "zsh",
+        USERNAME: "root" }
+
+    - { role: "zsh",
+        USERNAME: "pi" }
+
+    - { role: "tmux",
+        USERNAME: "root",
+        WEMUX_HOST_USER: "pi" }
+
+    - { role: "tmux",
+        USERNAME: "pi",
+        WEMUX_HOST_USER: "pi" }
+
+    - { role: "gitalias",
+        USERNAME: "pi" }
+
+    - { role: "apache",
+        APACHE_USERNAME: "web-bananapi",
+        DOMAIN_NAME: "bananapi.local",
+        HAS_WWW_PREFIX: "no",
+        HAS_SSL: "no" }
+
+    - { role: "nfs_share",
+        ALLOWED_IP_ADDRESS: "{{ VAULT_SERVER_NET_IP_ADDRESS }}",
+        SDA1_UUID: "845903da-a3b5-4673-be43-f368e35b8dba",
+        SDA2_UUID: "004b127c-e94f-472d-bbd3-fc0c03357b75",
+        NFS_OPTIONS: "rw,sync,no_subtree_check,root_squash",
+        USERNAME: "pi" }
+
+    - { role: "aria2c",
+        APACHE_USERNAME: "web-aria2ui",
+        DOMAIN_NAME: "aria2ui.bananapi.local",
+        HAS_WWW_PREFIX: "no",
+        HAS_SSL: "no",
+        USE_SYSTEMD_SERVICE_FILE: "yes",
+        RPC_LISTEN_PORT: "6800",
+        INTERFACE: "{{ VAULT_SERVER_STATIC_IP_ADDRESS }}" }
+
+    - { role: "mplayer",
+        WITH_FFMPEG: "yes" }
+
+    - { role: "ddclient",
+        DDCLIENT_PROTOCOL: "{{ VAULT_DDCLIENT_PROTOCOL }}",
+        DDCLIENT_USE: "{{ VAULT_DDCLIENT_SYNCHRONISE_METHOD }}",
+        DDCLIENT_TARGET: "{{ VAULT_DDCLIENT_TARGET }}",
+        DDCLIENT_SSL: "yes",
+        DDCLIENT_SERVER: "{{ VAULT_DDCLIENT_UPDATE_SERVER }}",
+        DDCLIENT_LOGIN: "{{ VAULT_DEDYN_USERNAME }}",
+        DDCLIENT_PASSWORD: "{{ VAULT_DEDYN_PASSWORD }}",
+        DDCLIENT_DYN_DNS_FQDN: "{{ VAULT_DDCLIENT_DYN_DNS_FQDN }}",
+        LETS_ENCRYPT_EMAIL_ADDRESS: "{{ VAULT_LETS_ENCRYPT_EMAIL_ADDRESS }}",
+        WITH_LETS_ENCRYPT: "yes" }
+
+    - { role: "purge_unnecessary_packages",
+        REMOVE_PACKAGES_IN_LIST: "yes",
+        PACKAGE_DELETE_LIST: ["nano", "vim-common", "vim-tiny"] }
+
+  post_tasks:
+    - name: update file database
+      shell: "updatedb"
+      tags:
+        - post_tasks
+
+    - debug:
+        msg:
+          - " ######################"
+          - " # IMPORTANT MESSAGES #"
+          - " ######################"
+          - ""
+          - " ----------------------> list usage here <------------------------"
+          - "refactor me"
+          - "motd old files location"
+          - " 1) /home/vagrant/new_ssh_port_live: a new port number has been generated on the target server which can be found on the 'bpro-provision-vm': vagrant ssh bpro-provison-vm"
+          - "    1.1) log in to target server:"
+          - "         1.1.1) execute: 'ssh pi@<target_server_ip> -p <ssh_port_number>'"
+          - "    1.2) log in to 'bpro-development-vm:'"
+          - "         1.2.1) execute: 'vagrant ssh bpro-development-vm'"
+          - "         1.2.2) if the switch 'LOCAL_TEST: no' for role 'harden_sshd' was used, go to the directory where the 'Vagrantfile' is saved and execute:"
+          - "                'ssh -i .vagrant/machines/bpro-development-vm/virtualbox/private_key vagrant@172.28.128.9 -p <ssh_port_number>'"
+          - "                !! WARNING !! You neither will be able to run 'vagrant up --provision' nor 'vagrant provision' again because vagrant uses ssh port 22. execute: 'vagrant destroy -f && vagrant up --provision' to rebuild the setup"
+          - " 2) /home/vagrant/credentials: generated credentials can be found on the 'bpro-provision-vm': vagrant ssh bpro-provision-vm"
+          - " 3) become root: on the target server, first log in as user 'pi' and then execute 'sudo -i' to become root"
+          - " 4) /etc/apt/sources.list: check, if the selected mirror: {{ FASTEST_MIRROR }} on the 'bpro-development-vm' and on the target server is official and is not discontinued! For more information go to: 'https://www.debian.org/mirror/list'"
+          - " 5) nfs share: check, if the setup was successfull by executing on the client: 'showmount --exports <ip_of_nfs_server>'"
+          - "    on the server also make sure that the hard drive partitions - sda1 and sda2 - were sucessfully mounted: 'mount | grep sda', 'ls /media/{BACKUP,BANANAPI}/', 'vi /etc/fstab'"
+      tags:
+        - post_tasks
+
+# live system only
+- hosts: "live"
+  pre_tasks:
+    - name: check, if deploy file exists
+      local_action:
+        module: "stat"
+        path: "/vagrant/.deploy_to_live"
+      register: "DEPLOY_TO_LIVE"
+      tags:
+        - pre_tasks
+
+  roles:
+    - { role: "harden_sshd",
+        PERMIT_ROOT_LOGIN: "no",
+        USERNAME: "pi",
+        SET_ALLOW_GROUPS_IN_LIST: "yes",
+        ALLOW_GROUP_LIST: ["ssh"],
+        LOCAL_TEST: "no",
+        when: DEPLOY_TO_LIVE.stat.exists == true}
+
+# how to call roles dynamically with "host_vars"?!
+# issue: https://github.com/ansible/ansible/issues/18341
+# - hosts: <some_host_in_inventory_file>
+#   tasks:
+#     - include_role:
+#         name: "<role_name>"
+#       vars: "{{ item }}"
+#       with_items: "{{ hostvars[inventory_hostname].<some_host_in_inventory_file> }}"
+#       when:
+#         - hostvars[inventory_hostname].<some_host_in_inventory_file> is defined

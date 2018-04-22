@@ -1,0 +1,92 @@
+# {{ ansible_managed }}
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+# aria2c
+console-log-level=notice
+dir=/var/www/aria2ui.bananapi.local/htdocs/.downloads/
+interface={{ INTERFACE }}
+log-level=info
+log=/var/log/aria2/aria2c.log
+
+{% if USE_SYSTEMD_SERVICE_FILE == "yes" %}
+# rpc options
+enable-rpc=true
+rpc-allow-origin-all=true
+rpc-listen-all=true
+rpc-listen-port=6800
+rpc-secret={{ RPC_SECRET }}
+{% endif %}
+# (s)ftp/http(s)
+continue=true
+auto-save-interval=30
+http-accept-gzip=true
+netrc-path=/var/www/aria2ui.bananapi.local/private/.netrc
+#on-download-complete=<command>
+#on-download-error=<command>
+#on-download-pause=<command>
+#on-download-start=<command>
+#on-download-stop=<command>
+# --------------------------
+max-concurrent-downloads=4
+max-connection-per-server=8
+min-split-size=20M
+split=8
+# --------------------------
+#deferred-input=true
+input-file=/var/www/aria2ui.bananapi.local/private/.aria2_session.gz
+save-session=/var/www/aria2ui.bananapi.local/private/.aria2_session.gz
+# --------------------------
+
+# torrent
+bt-stop-timeout=21600
+check-integrity=true
+listen-port=42424
+#on-bt-download-complete=<command>
+# --------------------------
+seed-ratio=2.0
+seed-time=30
+# --------------------------
+enable-dht=true
+enable-dht6=true
+dht-listen-port=6881-6999
+dht-file-path=/var/www/aria2ui.bananapi.local/private/.dht.dat
+dht-file-path6=/var/www/aria2ui.bananapi.local/private/.dht6.dat
+# --------------------------
+bt-force-encryption=true
+bt-require-crypto=true
+bt-min-crypto-level=arc4
+# --------------------------
+bt-max-peers=60
+bt-request-peer-speed-limit=50K
+# --------------------------
+max-overall-upload-limit=0
+max-upload-limit=240K
+# --------------------------
+
+# advanced options
+disable-ipv6=false
+event-poll=epoll
+file-allocation=falloc
+max-download-limit=0
+max-overall-download-limit=0
+min-tls-version=TLSv1.2
+# --------------------------
+allow-overwrite=true
+auto-file-renaming=false
+conditional-get=true
+remove-control-file=false
+# --------------------------

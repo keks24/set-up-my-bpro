@@ -1,0 +1,72 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install tool to automate upgrades (unattended-upgrades)
+  package:
+    name: "unattended-upgrades"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  notify:
+    - handler_enable_unattended-upgrades
+    - handler_restart_unattended-upgrades
+  tags:
+    - unattended-upgrades
+
+- name: include upgradeable packages and set autoclean interval
+  lineinfile:
+    path: "/etc/apt/apt.conf.d/20auto-upgrades"
+    line: '{{ item }}'
+  with_items:
+    - 'APT::Periodic::Download-Upgradeable-Packages "1";'
+    - 'APT::Periodic::AutocleanInterval "1";'
+  notify:
+    - handler_restart_unattended-upgrades
+  tags:
+    - unattended-upgrades
+
+- name: set settings for unattended-upgrades
+  replace:
+    path: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    regexp: "{{ item.REPLACE_REGEXP }}"
+    replace: "{{ item.REPLACE_REPLACE }}"
+  with_items:
+    - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::MinimalSteps.*", REPLACE_REPLACE: 'Unattended-Upgrade::MinimalSteps "true";' }
+    - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Mail.*", REPLACE_REPLACE: 'Unattended-Upgrade::Mail "{{ RECIPIENT_EMAIL_ADDRESS }}";' }
+    - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Remove-Unused-Dependencies.*", REPLACE_REPLACE: 'Unattended-Upgrade::Remove-Unused-Dependencies "true";' }
+    - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Automatic-Reboot-WithUsers.*", REPLACE_REPLACE: 'Unattended-Upgrade::Automatic-Reboot-WithUsers "true";' }
+    - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Automatic-Reboot-Time.*", REPLACE_REPLACE: 'Unattended-Upgrade::Automatic-Reboot-Time "03:00";' }
+  notify:
+    - handler_restart_unattended-upgrades
+  tags:
+    - unattended-upgrades
+
+- name: set settings to include all package updates
+  blockinfile:
+    path: "/etc/apt/apt.conf.d/50unattended-upgrades"
+    block: |4
+                "origin=Armbian,codename=${distro_codename}";
+                "origin=Debian,codename=${distro_codename}";
+                "origin=Debian,codename=${distro_codename}-updates";
+                "origin=Debian,codename=${distro_codename}-proposed";
+                "origin=Debian Backports,codename=${distro_codename}-backports";
+    insertbefore: '"origin=Debian,codename=\${distro_codename},label=Debian-Security";'
+    marker: "        # {mark} include all package updates"
+  notify:
+    - handler_restart_unattended-upgrades
+  tags:
+    - unattended-upgrades

@@ -1,0 +1,84 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: install let's encrypt (certbot)
+  package:
+    name: "python-certbot-apache"
+    default_release: "{{ DEFAULT_RELEASE }}"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - lets_encrypt
+
+- name: create directory for repositories
+  file:
+    path: "/usr/local/share/git/dedyn.io/"
+    owner: "root"
+    group: "staff"
+    mode: "0755"
+    state: "directory"
+  tags:
+    - lets_encrypt
+
+- name: clone certbot-hook repository
+  git:
+    repo: "https://github.com/desec-io/certbot-hook"
+    dest: "/usr/local/share/git/dedyn.io/certbot-hook/"
+    force: "yes"
+  tags:
+    - lets_encrypt
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/dedyn.io/certbot-hook/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - lets_encrypt
+
+- name: insert credentials for authentication
+  replace:
+    path: "/usr/local/share/git/dedyn.io/certbot-hook/.dedynauth"
+    regexp: "{{ item.REPLACE_REGEXP }}"
+    replace: "{{ item.REPLACE_REPLACE }}"
+  no_log: "yes"
+  with_items:
+    - { REPLACE_REGEXP: "(.)?.*DEDYN_TOKEN=.*", REPLACE_REPLACE: "DEDYN_TOKEN={{ DDCLIENT_PASSWORD }}" }
+    - { REPLACE_REGEXP: "(.)?.*DEDYN_NAME=.*", REPLACE_REPLACE: "DEDYN_NAME={{ DDCLIENT_LOGIN }}" }
+  tags:
+    - lets_encrypt
+
+- name: secure authentication file
+  file:
+    path: "/usr/local/share/git/dedyn.io/certbot-hook/.dedynauth"
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  tags:
+    - lets_encrypt
+
+- name: obtain certificate via dns challenge
+  shell: "certbot --manual --text --preferred-challenges dns --noninteractive --agree-tos --manual-public-ip-logging-ok --manual-auth-hook ./hook.sh -d '{{ DDCLIENT_DYN_DNS_FQDN }}' -m '{{ LETS_ENCRYPT_EMAIL_ADDRESS }}' certonly"
+  args:
+    chdir: "/usr/local/share/git/dedyn.io/certbot-hook/"
+    creates: "/etc/letsencrypt/live/{{ DDCLIENT_DYN_DNS_FQDN }}*"
+  ignore_errors: "yes"
+  tags:
+    - lets_encrypt

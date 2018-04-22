@@ -1,0 +1,31 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+if [[ $(command -v needrestart 2>/dev/null) && $(command -v grep 2>/dev/null) && $(command -v reboot 2>/dev/null) ]]
+then
+    DEBIAN_FRONTEND="noninteractive"
+    need_reboot=$(echo | $(command -v needrestart) -vnk 2>/dev/null | $(command -v grep) "Pending kernel upgrade")
+
+    if [[ -n "${need_reboot}" ]]
+    then
+        echo -e "\e[01;31mpending kernel upgrade:\e[0m \e[01;31;5ma reboot is required to use a newly installed kernel!\e[0m \e[01;31m(execute as root: $(command -v reboot))\e[0m"
+    fi
+else
+    echo -e "\e[01;31mcould not find command 'needrestart', 'grep' or 'reboot'.\e[0m"
+    exit 1
+fi

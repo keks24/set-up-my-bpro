@@ -1,0 +1,79 @@
+---
+#############################################################################
+# Copyright 2018 Ramon Fischer                                              #
+#                                                                           #
+# Licensed under the Apache License, Version 2.0 (the "License");           #
+# you may not use this file except in compliance with the License.          #
+# You may obtain a copy of the License at                                   #
+#                                                                           #
+#     http://www.apache.org/licenses/LICENSE-2.0                            #
+#                                                                           #
+# Unless required by applicable law or agreed to in writing, software       #
+# distributed under the License is distributed on an "AS IS" BASIS,         #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+# See the License for the specific language governing permissions and       #
+# limitations under the License.                                            #
+#############################################################################
+
+- name: check, if ssh banner has been already set
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/ssh_banner_content_set"
+  register: "SSH_BANNER_CONTENT_SET"
+  tags:
+    - ssh_banner
+
+- name: install tool to generate awesome ascii art (figlet)
+  package:
+    name: "figlet"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  when:
+    - SSH_BANNER_CONTENT_SET.stat.exists == false
+  tags:
+    - ssh_banner
+
+- name: generate and save new ssh banner
+  shell: "$(command -v figlet) -f {{ FONT_NAME | quote }} {{ BANNER_TEXT | quote }} > ssh_banner.net"
+  args:
+    chdir: "/etc/"
+    creates: "/etc/ssh_banner.net"
+  when:
+    - SSH_BANNER_CONTENT_SET.stat.exists == false
+  tags:
+    - ssh_banner
+
+- name: enable ssh banner
+  replace:
+    path: "/etc/ssh/sshd_config"
+    regexp: "(.)?.*Banner.*"
+    replace: "Banner /etc/ssh_banner.net"
+    validate: "/usr/sbin/sshd -t -f %s"
+  notify:
+    - handler_reload_sshd
+  when:
+    - SSH_BANNER_CONTENT_SET.stat.exists == false
+  tags:
+    - ssh_banner
+
+- name: remove tool
+  package:
+    name: "figlet"
+    purge: "yes"
+    state: "absent"
+  when:
+    - SSH_BANNER_CONTENT_SET.stat.exists == false
+  tags:
+    - ssh_banner
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/ssh_banner_content_set"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - SSH_BANNER_CONTENT_SET.stat.exists == false
+  tags:
+    - ssh_banner
