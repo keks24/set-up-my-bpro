@@ -24,6 +24,7 @@ document usage and make "README.md" fancy
 /usr/local/etc/.ansible_dotfile_switches
 dynamic_motd_content_set
 fastest_mirror_set
+host_keys_generated
 hostname_set
 ssh_banner_content_set
 sshd_settings_local_test_set
