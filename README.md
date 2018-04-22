@@ -6,8 +6,6 @@ testing:
     execute roles twice
     check every role on its own
 
-replace root password with an exclamation mark
-
 refactor regular expressions in "replace" and "lineinfile" modules
 purge ntpd, install ntp-client
     adapt ntp.conf of Gentoo
@@ -34,8 +32,10 @@ webui_aria2_repository_content_copied
 
 # Ansible conventions
 The following conventions were used to create all roles:
+
 use devel version only
 use ssh pipelining and not the deprecated accelerate option!!
+when cloning with "git" module, always use 'force: "yes"'
 be idempotent: try to get "ok"s when executing a second time
 avoid using the "shell" module as much as possible to keep idempotency
 write custom variables in uppercase
