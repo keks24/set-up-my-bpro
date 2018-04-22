@@ -40,8 +40,12 @@
       tags:
         - pre_tasks
 
-          # substitute root password with an exclamation mark
-          #- name
+    - name: lock password of user "root"
+      user:
+        name: "root"
+        password: "!"
+      tags:
+        - pre_tasks
 
   roles:
     - { role: "remove_dotfile_switches",
