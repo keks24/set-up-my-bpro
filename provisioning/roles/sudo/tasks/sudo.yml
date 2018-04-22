@@ -15,6 +15,15 @@
 # limitations under the License.                                            #
 #############################################################################
 
+- name: install tool to become other users (sudo)
+  package:
+    name: "sudo"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - sudo
+
 - name: copy sudo configuration files
   template:
     src: "{{ item }}"
