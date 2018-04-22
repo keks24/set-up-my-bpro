@@ -17,7 +17,7 @@ set cpu govenor to "conservative": /etc/default/cpufrequtils
 
 !! use "lynis" to test security and stuff !!
 
-document usage
+document usage and make "README.md" fancy
 
 !! find another way to manipulate variables, current solution is to set them globally in "set_up_armbian.yml" ("import_role" with "vars" does not work at the moment: https://github.com/ansible/ansible/issues/18341)
 # Dotfile switches
