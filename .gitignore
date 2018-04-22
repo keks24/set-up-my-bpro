@@ -1,7 +1,7 @@
 # ansible
-## ignore ansible retry files
+## ignore retry files
 *.retry
-## ignore ansible vault password file
+## ignore vault password file
 .vault_pass
 ## ignore credentials file
 provisioning/group_vars/credentials.yml
