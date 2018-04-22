@@ -34,6 +34,8 @@ Insert the following variables:
 # generic
 VAULT_SERVER_STATIC_IP_ADDRESS: ""
 VAULT_SERVER_NET_IP_ADDRESS: ""
+VAULT_SDA1_UUID: ""
+VAULT_SDA2_UUID: ""
 
 # unattended-upgrades
 ## postfix credentials
@@ -63,6 +65,8 @@ VAULT_LETS_ENCRYPT_EMAIL_ADDRESS: ""
 # generic
 VAULT_SERVER_STATIC_IP_ADDRESS: "192.168.2.5"
 VAULT_SERVER_NET_IP_ADDRESS: "192.168.2.0/24"
+VAULT_SDA1_UUID: "845903da-a3b5-4673-be43-f368e35b8dba"
+VAULT_SDA2_UUID: "004b127c-e94f-472d-bbd3-fc0c03357b75"
 
 # unattended-upgrades
 ## postfix credentials
