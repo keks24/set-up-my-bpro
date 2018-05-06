@@ -40,10 +40,12 @@
       tags:
         - pre_tasks
 
-    - name: lock password of user "root"
+    - name: set strong password for user "root"
       user:
         name: "root"
-        password: "!"
+        group: "root"
+        password: "{{ lookup('password', '/home/vagrant/credentials/password_super_user_root chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
+        state: "present"
       tags:
         - pre_tasks
 
