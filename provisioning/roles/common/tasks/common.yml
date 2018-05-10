@@ -44,6 +44,7 @@
       - "unzip"
       - "w3m"
       - "wget"
+      - "xfonts-terminus"
       - "zip"
     cache_valid_time: "{{ CACHE_VALID_TIME }}"
     update_cache: "yes"
