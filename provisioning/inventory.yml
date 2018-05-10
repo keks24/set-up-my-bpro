@@ -31,15 +31,14 @@ development:
 # intercept errors on development vm first, then deploy to live
 live:
   hosts:
-    bpro-development-vm:
     live-system:
-      ansible_host: "some_ip_address"
+      ansible_host: "192.168.0.224"
       ansible_private_key_file: "/vagrant/.vagrant/machines/bpro-provision-vm/virtualbox/private_key"
       ansible_user: "root"
       ansible_become: "yes"
 
 all:
   hosts:
-    children:
+    dev_live:
       development:
       live:
