@@ -30,18 +30,18 @@
 - name: connect postfix with smtp server
   lineinfile:
     path: "/etc/postfix/main.cf"
-    regexp: "{{ item.REPLACE_REGEXP }}"
-    line: "{{ item.REPLACE_LINE }}"
+    regexp: "{{ item.LINEINFILE_REGEXP }}"
+    line: "{{ item.LINEINFILE_LINE }}"
     validate: "/usr/sbin/postfix check %s"
   with_items:
-    - { REPLACE_REGEXP: "myhostname =.*", REPLACE_LINE: "myhostname = {{ HOSTNAME }}" }
-    - { REPLACE_REGEXP: "relayhost =.*", REPLACE_LINE: "relayhost = [{{ SMTP_FQDN }}]:{{ SMTP_PORT }}" }
-    - { REPLACE_REGEXP: "smtp_use_tls =.*", REPLACE_LINE: "smtp_use_tls = yes" }
-    - { REPLACE_REGEXP: "smtp_sasl_auth_enable =.*", REPLACE_LINE: "smtp_sasl_auth_enable = yes" }
-    - { REPLACE_REGEXP: "smtp_sasl_security_options =.*", REPLACE_LINE: "smtp_sasl_security_options = noanonymous" }
-    - { REPLACE_REGEXP: "smtp_sasl_password_maps =.*", REPLACE_LINE: "smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd" }
-    - { REPLACE_REGEXP: "smtp_tls_security_level =.*", REPLACE_LINE: "smtp_tls_security_level = encrypt" }
-    - { REPLACE_REGEXP: "smtp_tls_CAfile =.*", REPLACE_LINE: "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt" }
+    - { LINEINFILE_REGEXP: "myhostname =.*", LINEINFILE_LINE: "myhostname = {{ HOSTNAME }}" }
+    - { LINEINFILE_REGEXP: "relayhost =.*", LINEINFILE_LINE: "relayhost = [{{ SMTP_FQDN }}]:{{ SMTP_PORT }}" }
+    - { LINEINFILE_REGEXP: "smtp_use_tls =.*", LINEINFILE_LINE: "smtp_use_tls = yes" }
+    - { LINEINFILE_REGEXP: "smtp_sasl_auth_enable =.*", LINEINFILE_LINE: "smtp_sasl_auth_enable = yes" }
+    - { LINEINFILE_REGEXP: "smtp_sasl_security_options =.*", LINEINFILE_LINE: "smtp_sasl_security_options = noanonymous" }
+    - { LINEINFILE_REGEXP: "smtp_sasl_password_maps =.*", LINEINFILE_LINE: "smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd" }
+    - { LINEINFILE_REGEXP: "smtp_tls_security_level =.*", LINEINFILE_LINE: "smtp_tls_security_level = encrypt" }
+    - { LINEINFILE_REGEXP: "smtp_tls_CAfile =.*", LINEINFILE_LINE: "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt" }
   notify:
     - handler_reload_postfix
     - handler_check_postfix
