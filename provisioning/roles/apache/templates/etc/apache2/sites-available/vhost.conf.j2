@@ -27,6 +27,7 @@
     <Directory "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/htdocs">
         AllowOverride None
     </Directory>
+
 {% if HAS_SSL == "yes" %}
     RewriteEngine on
     RewriteCond %{SERVER_NAME} ={{ WWW_PREFIX }}{{ DOMAIN_NAME }}
