@@ -7,9 +7,6 @@ testing:
     check every role on its own
     check, if packages are installed in their own role and not from "common" (see motd, sudo)
 
-    fix postfix "header_checks" and so on
-    adapt ntp.conf of Gentoo
-
 set cpu govenor to "conservative": /etc/default/cpufrequtils
 
 
