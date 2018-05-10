@@ -29,8 +29,8 @@
 
 - name: check, if token has been already generated
   stat:
-    path: "/usr/local/etc/.ansible_dotfile_switches/token_generated"
-  register: "TOKEN_GENERATED"
+    path: "/usr/local/etc/.ansible_dotfile_switches/aria2c_token_generated"
+  register: "ARIA2C_TOKEN_GENERATED"
   tags:
     - aria2c
 
@@ -39,19 +39,19 @@
   set_fact:
     RPC_SECRET: "{{ lookup('password', '/home/vagrant/credentials/aria2_rpc_secret chars=ascii_letters,digits,hexdigits') }}"
   when:
-    - TOKEN_GENERATED.stat.exists == false
+    - ARIA2C_TOKEN_GENERATED.stat.exists == false
   tags:
     - aria2c
 
 - name: create indicator
   file:
-    path: "/usr/local/etc/.ansible_dotfile_switches/token_generated"
+    path: "/usr/local/etc/.ansible_dotfile_switches/aria2c_token_generated"
     owner: "root"
     group: "staff"
     mode: "0644"
     state: "touch"
   when:
-    - TOKEN_GENERATED.stat.exists == false
+    - ARIA2C_TOKEN_GENERATED.stat.exists == false
   tags:
     - aria2c
 
