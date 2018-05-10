@@ -7,6 +7,7 @@ testing:
     check every role on its own
     check, if packages are installed in their own role and not from "common" (see motd, sudo)
 
+secure "configuration.js" (webui-aria2)
 test aria2c init file
 refactor regular expressions in "replace" and "lineinfile" modules
 

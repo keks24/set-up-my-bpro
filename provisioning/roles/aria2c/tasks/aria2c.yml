@@ -53,7 +53,7 @@
     dest: "/etc/init.d/aria2c"
     owner: "root"
     group: "root"
-    mode: "0755"
+    mode: "0700"
   when:
     - USE_SYSTEMD_SERVICE_FILE == "no"
   tags:
