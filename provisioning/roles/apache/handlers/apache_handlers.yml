@@ -15,35 +15,35 @@
 # limitations under the License.                                            #
 #############################################################################
 
-- name: handler_start_apache2
+- name: handler_start_apache
   systemd:
     name: "apache2.service"
     daemon_reload: "yes"
     state: "started"
 
-- name: handler_stop_apache2
+- name: handler_stop_apache
   systemd:
     name: "apache2.service"
     daemon_reload: "yes"
     state: "stopped"
 
-- name: handler_restart_apache2
+- name: handler_restart_apache
   systemd:
     name: "apache2.service"
     daemon_reload: "yes"
     state: "restarted"
 
-- name: handler_reload_apache2
+- name: handler_reload_apache
   systemd:
     name: "apache2.service"
     daemon_reload: "yes"
     state: "reloaded"
 
-- name: handler_enable_apache2
+- name: handler_enable_apache
   systemd:
     name: "apache2.service"
     daemon_reload: "yes"
     enabled: "yes"
 
-- name: handler_check_apache2
+- name: handler_check_apache
   shell: "$(command -v apache2ctl) configtest"
