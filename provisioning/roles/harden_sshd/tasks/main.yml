@@ -19,14 +19,6 @@
   tags:
     - harden_sshd
 
-- include_tasks: "harden_sshd_local_test.yml"
-  when:
-    - LOCAL_TEST == "yes"
-  tags:
-    - harden_sshd
-
-- include_tasks: "harden_sshd_live.yml"
-  when:
-    - LOCAL_TEST == "no"
+- import_tasks: "harden_sshd.yml"
   tags:
     - harden_sshd
