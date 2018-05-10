@@ -54,7 +54,6 @@
 - name: save variable as ansible fact
   set_fact:
     FASTEST_MIRROR: "{{ FASTEST_MIRROR.stdout }}"
-  run_once: "yes"
   when:
     - FASTEST_MIRROR_SET.stat.exists == false
   tags:
