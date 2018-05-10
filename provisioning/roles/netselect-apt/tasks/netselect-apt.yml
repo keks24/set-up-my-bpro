@@ -75,10 +75,10 @@
     - netselect-apt
 
 - name: enable security repository
-  lineinfile:
+  replace:
     path: "/etc/apt/sources.list"
-    regexp: "# deb http://security.debian.org/ stable/updates main contrib non-free"
-    line: "deb http://security.debian.org/ {{ CURRENT_STABLE_CODENAME }}/updates main contrib non-free"
+    regexp: "(.)?.*deb http://security.debian.org/ stable/updates.*"
+    replace: "deb http://security.debian.org/ {{ CURRENT_STABLE_CODENAME }}/updates main contrib non-free"
   when:
     - FASTEST_MIRROR_SET.stat.exists == false
   tags:
