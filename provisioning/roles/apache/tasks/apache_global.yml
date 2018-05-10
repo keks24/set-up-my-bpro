@@ -22,8 +22,8 @@
     update_cache: "yes"
     state: "{{ PACKAGE_STATE }}"
   notify:
-    - handler_enable_apache2
-    - handler_restart_apache2
+    - handler_enable_apache
+    - handler_restart_apache
   tags:
     - apache
 
@@ -34,11 +34,11 @@
   with_items:
     - "rewrite"
   notify:
-    - handler_restart_apache2
+    - handler_restart_apache
   tags:
     - apache
 
-- name: copy vhost configuration
+- name: copy vhost configuration file
   template:
     src: "templates/etc/apache2/sites-available/vhost.conf.j2"
     dest: "/etc/apache2/sites-available/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}.conf"
@@ -46,11 +46,11 @@
     group: "root"
     mode: "0644"
   notify:
-    - handler_check_apache2
+    - handler_check_apache
   tags:
     - apache
 
-- name: enable vhost configuration
+- name: enable vhost configuration file
   file:
     src: "/etc/apache2/sites-available/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}.conf"
     dest: "/etc/apache2/sites-enabled/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}.conf"
@@ -59,7 +59,8 @@
     mode: "0777"
     state: "link"
   notify:
-    - handler_check_apache2
+    - handler_reload_apache
+    - handler_check_apache
   tags:
     - apache
 

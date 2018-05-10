@@ -15,7 +15,7 @@
 # limitations under the License.                                            #
 #############################################################################
 
-- import_tasks: "apache2_handlers.yml"
+- import_tasks: "apache_handlers.yml"
   tags:
     - apache
 

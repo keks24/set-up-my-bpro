@@ -84,8 +84,8 @@
     group: "{{ APACHE_USERNAME }}"
     mode: "0644"
   notify:
-    - handler_reload_apache2
-    - handler_check_apache2
+    - handler_reload_apache
+    - handler_check_apache
   tags:
     - apache
 
@@ -97,7 +97,7 @@
     group: "{{ APACHE_USERNAME }}"
     mode: "0644"
   notify:
-    - handler_reload_apache2
-    - handler_check_apache2
+    - handler_reload_apache
+    - handler_check_apache
   tags:
     - apache
