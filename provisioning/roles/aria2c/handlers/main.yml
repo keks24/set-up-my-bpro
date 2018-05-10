@@ -22,3 +22,7 @@
 - import_tasks: "aria2c_init_handlers.yml"
   tags:
     - aria2c
+
+- import_tasks: "apache_handlers.yml"
+  tags:
+    - aria2c
