@@ -7,9 +7,6 @@ testing:
     check every role on its own
     check, if packages are installed in their own role and not from "common" (see motd, sudo)
 
-set cpu govenor to "conservative": /etc/default/cpufrequtils
-
-
 !! use "lynis" to test security and stuff !!
 
 document usage and make "README.md" fancy
