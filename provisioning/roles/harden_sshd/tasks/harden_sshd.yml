@@ -17,21 +17,20 @@
 
 - name: check, if sshd settings has been already set
   stat:
-    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_local_test_set"
-  register: "SSHD_SETTINGS_LOCAL_TEST_SET"
+    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_set"
+  register: "SSHD_SETTINGS_SET"
   tags:
     - harden_sshd
 
 - name: generate random ssh port
   set_fact:
     SSH_PORT_NUMBER: "{{ 49151 | random(start=1024) }}"
-  run_once: "yes"
   when:
-    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+    - SSHD_SETTINGS_SET.stat.exists == false
   tags:
     - harden_sshd
 
-- name: save new ssh port number
+- name: save generated ssh port number
   local_action:
     module: "copy"
     content: |
@@ -41,7 +40,53 @@
     group: "vagrant"
     mode: "0644"
   when:
-    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+    - SSHD_SETTINGS_SET.stat.exists == false
+    - LOCAL_TEST == "yes"
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: set ssh port (local test)
+  replace:
+    path: "/etc/ssh/sshd_config"
+    regexp: "(.)?.*Port.*[0-9]{1,5}"
+    replace: "#Port {{ SSH_PORT_NUMBER }}"
+    validate: "/usr/sbin/sshd -t -f %s"
+  when:
+    - SSHD_SETTINGS_SET.stat.exists == false
+    - LOCAL_TEST == "yes"
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: save generated ssh port number
+  local_action:
+    module: "copy"
+    content: |
+      {{ SSH_PORT_NUMBER }}
+    dest: "/home/vagrant/new_ssh_port_live"
+    owner: "vagrant"
+    group: "vagrant"
+    mode: "0644"
+  when:
+    - SSHD_SETTINGS_SET.stat.exists == false
+    - LOCAL_TEST == "no"
+  notify:
+    - handler_reload_sshd
+  tags:
+    - harden_sshd
+
+- name: set ssh port (live)
+  replace:
+    path: "/etc/ssh/sshd_config"
+    regexp: "(.)?.*Port.*[0-9]{1,5}"
+    replace: "Port {{ SSH_PORT_NUMBER }}"
+    validate: "/usr/sbin/sshd -t -f %s"
+  when:
+    - SSHD_SETTINGS_SET.stat.exists == false
+    - LOCAL_TEST == "no"
   notify:
     - handler_reload_sshd
   tags:
@@ -54,14 +99,13 @@
     replace: "{{ item.REPLACE_REPLACE }}"
     validate: "/usr/sbin/sshd -t -f %s"
   with_items:
-    - { REPLACE_REGEXP: "(.)?.*Port.*[0-9]{1,5}", REPLACE_REPLACE: "#Port {{ SSH_PORT_NUMBER }}" }
     - { REPLACE_REGEXP: "(.)?.*LoginGraceTime.*", REPLACE_REPLACE: "LoginGraceTime 30" }
     - { REPLACE_REGEXP: "(.)?.*PermitRootLogin.*(forced-commands-only|no|prohibit-password|without-password|yes)$", REPLACE_REPLACE: "PermitRootLogin {{ PERMIT_ROOT_LOGIN }}" }
     - { REPLACE_REGEXP: "(.)?.*X11Forwarding.*(no|yes)$", REPLACE_REPLACE: "X11Forwarding no" }
     - { REPLACE_REGEXP: "(.)?.*ClientAliveInterval.*[0-9]*$", REPLACE_REPLACE: "ClientAliveInterval 300" }
     - { REPLACE_REGEXP: "(.)?.*ClientAliveCountMax.*[0-9]*$", REPLACE_REPLACE: "ClientAliveCountMax 0" }
   when:
-    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+    - SSHD_SETTINGS_SET.stat.exists == false
   notify:
     - handler_reload_sshd
   tags:
@@ -77,7 +121,7 @@
     - "{{ ALLOW_GROUP_LIST }}"
   when:
     - SET_ALLOW_GROUPS_IN_LIST == "yes"
-    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+    - SSHD_SETTINGS_SET.stat.exists == false
   notify:
     - handler_reload_sshd
   tags:
@@ -85,12 +129,12 @@
 
 - name: create indicator
   file:
-    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_local_test_set"
+    path: "/usr/local/etc/.ansible_dotfile_switches/sshd_settings_set"
     owner: "root"
     group: "staff"
     mode: "0644"
     state: "touch"
   when:
-    - SSHD_SETTINGS_LOCAL_TEST_SET.stat.exists == false
+    - SSHD_SETTINGS_SET.stat.exists == false
   tags:
     - harden_sshd
