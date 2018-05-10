@@ -57,6 +57,7 @@
     - { REPLACE_REGEXP: "(.)?.*Port.*[0-9]{1,5}", REPLACE_REPLACE: "Port {{ SSH_PORT_NUMBER }}" }
     - { REPLACE_REGEXP: "(.)?.*LoginGraceTime.*", REPLACE_REPLACE: "LoginGraceTime 30" }
     - { REPLACE_REGEXP: "(.)?.*PermitRootLogin.*(forced-commands-only|no|prohibit-password|without-password|yes)$", REPLACE_REPLACE: "PermitRootLogin {{ PERMIT_ROOT_LOGIN }}" }
+    - { REPLACE_REGEXP: "(.)?.*X11Forwarding.*(no|yes)$", REPLACE_REPLACE: "X11Forwarding no" }
     - { REPLACE_REGEXP: "(.)?.*ClientAliveInterval.*[0-9]*$", REPLACE_REPLACE: "ClientAliveInterval 300" }
     - { REPLACE_REGEXP: "(.)?.*ClientAliveCountMax.*[0-9]*$", REPLACE_REPLACE: "ClientAliveCountMax 0" }
   when:
