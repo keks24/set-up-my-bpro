@@ -55,7 +55,7 @@
     block: |
       header_checks = regexp:/etc/postfix/header_checks
       mime_header_checks = regexp:/etc/postfix/header_checks
-    marker: "# {mark} exclude headers
+    marker: "# {mark} exclude headers"
   notify:
     - handler_reload_postfix
     - handler_check_postfix
