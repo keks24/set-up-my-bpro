@@ -40,14 +40,35 @@
       tags:
         - pre_tasks
 
+    - name: check, if root password has been already set
+      stat:
+        path: "/usr/local/etc/.ansible_dotfile_switches/root_password_set"
+      register: "ROOT_PASSWORD_SET"
+      tags:
+        - pre_tasks
+
     - name: set strong password for user "root"
       user:
         name: "root"
         group: "root"
         password: "{{ lookup('password', '/home/vagrant/credentials/password_super_user_root chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
         state: "present"
+      when:
+        - ROOT_PASSWORD_SET.stat.exists == false
       tags:
         - pre_tasks
+
+    - name: create indicator
+      file:
+        path: "/usr/local/etc/.ansible_dotfile_switches/root_password_set"
+        owner: "root"
+        group: "staff"
+        mode: "0644"
+        state: "touch"
+      when:
+        - ROOT_PASSWORD_SET.stat.exists == false
+      tags:
+        - netselect-apt
 
   roles:
     - { role: "remove_dotfile_switches",
@@ -76,6 +97,8 @@
     - "netselect-apt"
 
     - "common"
+
+    - "ntp"
 
     - { role: "fail2ban",
         IGNORE_IP_ADDRESS: "{{ VAULT_SERVER_NET_IP_ADDRESS }}",
@@ -164,7 +187,7 @@
 
     - { role: "purge_unnecessary_packages",
         PURGE_PACKAGES_IN_LIST: "yes",
-        PACKAGE_PURGE_LIST: ["nano", "ntpd", "vim-common", "vim-tiny"] }
+        PACKAGE_PURGE_LIST: ["nano", "vim-common", "vim-tiny"] }
 
   post_tasks:
     - name: update file database
