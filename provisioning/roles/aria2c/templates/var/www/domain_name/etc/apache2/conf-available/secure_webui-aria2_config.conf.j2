@@ -1,4 +1,4 @@
----
+# {{ ansible_managed }}
 #############################################################################
 # Copyright 2018 Ramon Fischer                                              #
 #                                                                           #
@@ -15,18 +15,8 @@
 # limitations under the License.                                            #
 #############################################################################
 
-# apt module
-PACKAGE_STATE: "latest"
-CACHE_VALID_TIME: "86400"
-
-# apache settings
-APACHE_USERNAME: "www-data"
-SERVERIP: "*"
-HAS_WWW_PREFIX: "no"
-HAS_SSL: "no"
-ALLOWED_IP_ADDRESS: ""
-
-# aria2c settings
-RPC_LISTEN_PORT: "6800"
-USE_SYSTEMD_SERVICE_FILE: "no"
-INTERFACE: "192.168.2.5"
+<Files "configuration.js">
+    <RequireAll>
+        Require ip {{ ALLOWED_IP_ADDRESS }}
+    </RequireAll>
+</Files>

@@ -15,18 +15,35 @@
 # limitations under the License.                                            #
 #############################################################################
 
-# apt module
-PACKAGE_STATE: "latest"
-CACHE_VALID_TIME: "86400"
+- name: handler_start_apache
+  systemd:
+    name: "apache2.service"
+    daemon_reload: "yes"
+    state: "started"
 
-# apache settings
-APACHE_USERNAME: "www-data"
-SERVERIP: "*"
-HAS_WWW_PREFIX: "no"
-HAS_SSL: "no"
-ALLOWED_IP_ADDRESS: ""
+- name: handler_stop_apache
+  systemd:
+    name: "apache2.service"
+    daemon_reload: "yes"
+    state: "stopped"
 
-# aria2c settings
-RPC_LISTEN_PORT: "6800"
-USE_SYSTEMD_SERVICE_FILE: "no"
-INTERFACE: "192.168.2.5"
+- name: handler_restart_apache
+  systemd:
+    name: "apache2.service"
+    daemon_reload: "yes"
+    state: "restarted"
+
+- name: handler_reload_apache
+  systemd:
+    name: "apache2.service"
+    daemon_reload: "yes"
+    state: "reloaded"
+
+- name: handler_enable_apache
+  systemd:
+    name: "apache2.service"
+    daemon_reload: "yes"
+    enabled: "yes"
+
+- name: handler_check_apache
+  shell: "$(command -v apache2ctl) configtest"

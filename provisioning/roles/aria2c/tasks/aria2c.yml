@@ -155,6 +155,14 @@
   tags:
     - aria2c
 
+- name: set download path in configuration file
+  replace:
+    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
+    regexp: "(.){2}?.*directURL:.*"
+    replace: "  directURL: 'http://{{ DOMAIN_NAME }}/.downloads/'"
+  tags:
+    - aria2c
+
 - name: secure configuration file
   file:
     path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
@@ -164,11 +172,30 @@
   tags:
     - aria2c
 
-- name: set direct url in configuration file
-  replace:
-    path: "/var/www/{{ DOMAIN_NAME }}/htdocs/configuration.js"
-    regexp: "(.){2}?.*directURL:.*"
-    replace: "  directURL: 'http://{{ DOMAIN_NAME }}/.downloads/'"
+- name: copy vhost configuration file
+  template:
+    src: "templates/var/www/domain_name/etc/apache2/conf-available/secure_webui-aria2_config.conf.j2"
+    dest: "/var/www/{{ DOMAIN_NAME }}/etc/apache2/conf-available/secure_webui-aria2_config.conf"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0644"
+  notify:
+    - handler_reload_apache
+    - handler_check_apache
+  tags:
+    - aria2c
+
+- name: enable vhost configuration file
+  file:
+    src: "/var/www/{{ DOMAIN_NAME }}/etc/apache2/conf-available/secure_webui-aria2_config.conf"
+    dest: "/var/www/{{ DOMAIN_NAME }}/etc/apache2/conf-enabled/secure_webui-aria2_config.conf"
+    owner: "{{ APACHE_USERNAME }}"
+    group: "{{ APACHE_USERNAME }}"
+    mode: "0777"
+    state: "link"
+  notify:
+    - handler_reload_apache
+    - handler_check_apache
   tags:
     - aria2c
 
