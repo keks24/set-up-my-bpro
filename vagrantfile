@@ -84,17 +84,22 @@ Vagrant.configure("2") do |config|
         end
 
         # deploy to live by executing: 'deploy="live" vagrant provision'
-        #if ENV['deploy'] == "live"
-        #    vmConfig.vm.provision "ansible_local" do |ansible|
-        #        ansible.playbook = "provisioning/set_up_my_bpro.yml"
-        #        ansible.inventory_path = "provisioning/inventory.yml"
-        #        ansible.config_file = "provisioning/ansible.cfg"
-        #        ansible.install_mode = "pip"
-        #        #ansible.version = "2.4.2.0"
-        #        #ansible.tags = ""
-        #        ansible.limit = "live"
-        #        ansible.verbose = false
-        #    end
-        #end
+        if ENV['deploy'] == "live"
+            vmConfig.vm.provision "ansible_local" do |ansible|
+                ansible.playbook = "provisioning/set_up_my_bpro.yml"
+                ansible.inventory_path = "provisioning/inventory.yml"
+                ansible.config_file = "provisioning/ansible.cfg"
+                # for productive use
+                #ansible.install_mode = "pip"
+                #ansible.version = "2.4.2.0"
+                # when using ansible devel version (requires "$provisioning_script" call)
+                ansible.install_mode = "pip_args_only"
+                ansible.pip_args = "-r /vagrant/requirements.txt"
+
+                #ansible.tags = ""
+                ansible.limit = "all"
+                ansible.verbose = false
+            end
+        end
     end
 end
