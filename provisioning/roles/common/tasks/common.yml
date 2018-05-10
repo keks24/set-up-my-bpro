@@ -35,6 +35,7 @@
       - "net-tools"
       - "neofetch"
       - "nload"
+      - "ntp"
       - "ntpdate"
       - "psmisc"
       - "rsync"
