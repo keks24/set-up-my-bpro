@@ -16,4 +16,4 @@
 #############################################################################
 
 dependencies:
-    - { role: "lets_encrypt", when: WITH_LETS_ENCRYPT == "yes" }
+  - { role: "lets_encrypt", when: WITH_LETS_ENCRYPT == "yes" }
