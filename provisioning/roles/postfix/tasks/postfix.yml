@@ -48,15 +48,14 @@
   tags:
     - postfix
 
-- name: do not include headers when sending e-mails
-  lineinfile:
+- name: exclude headers when sending e-mails
+  blockinfile:
     path: "/etc/postfix/main.cf"
-    regexp: "{{ item.LINEINFILE_REGEXP }}"
-    line: "{{ item.LINEINFILE_LINE }}"
     validate: "/usr/sbin/postfix check %s"
-  with_items:
-    - { LINEINFILE_REGEXP: "header_checks =.*", LINEINFILE_LINE: "header_checks = regexp:/etc/postfix/header_checks" }
-    - { LINEINFILE_REGEXP: "mime_header_checks =.*", LINEINFILE_LINE: "mime_header_checks = regexp:/etc/postfix/header_checks" }
+    block: |
+      header_checks = regexp:/etc/postfix/header_checks
+      mime_header_checks = regexp:/etc/postfix/header_checks
+    marker: "# {mark} exclude headers
   notify:
     - handler_reload_postfix
     - handler_check_postfix
