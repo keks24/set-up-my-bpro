@@ -15,30 +15,22 @@
 # limitations under the License.                                            #
 #############################################################################
 
-provisioning:
+all:
   hosts:
     bpro-provision-vm:
       ansible_connection: "local"
-
-development:
-  hosts:
-    bpro-development-vm:
-      ansible_host: "192.168.100.100"
-      ansible_private_key_file: "/vagrant/.vagrant/machines/bpro-development-vm/virtualbox/private_key"
-      ansible_user: "vagrant"
-      ansible_become: "yes"
-
-# intercept errors on development vm first, then deploy to live
-live:
-  hosts:
-    live-system:
-      ansible_host: "192.168.0.224"
-      ansible_private_key_file: "/vagrant/.vagrant/machines/bpro-provision-vm/virtualbox/private_key"
-      ansible_user: "root"
-      ansible_become: "yes"
-
-all:
-  hosts:
-    dev_live:
-      development:
-      live:
+  children:
+    development:
+      hosts:
+        bpro-development-vm:
+          ansible_host: "192.168.100.100"
+          ansible_private_key_file: "/vagrant/.vagrant/machines/bpro-development-vm/virtualbox/private_key"
+          ansible_user: "vagrant"
+          ansible_become: "yes"
+    live:
+      hosts:
+        live-system:
+          ansible_host: "192.168.0.224"
+          ansible_private_key_file: "/vagrant/.vagrant/machines/bpro-provision-vm/virtualbox/private_key"
+          ansible_user: "pi"
+          ansible_become: "yes"
