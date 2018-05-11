@@ -23,6 +23,7 @@
       - "cronolog"
       - "dnsutils"
       - "git"
+      - "hdparm"
       - "htop"
       - "iotop"
       - "iptables"
