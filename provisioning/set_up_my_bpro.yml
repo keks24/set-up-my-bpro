@@ -250,7 +250,8 @@
     - { role: "remove_dotfile_switches",
         REMOVE_ALL: "no",
         REMOVE_FILES_IN_LIST: "yes",
-        FILE_DELETE_LIST: ["sshd_settings_set"] }
+        FILE_DELETE_LIST: ["sshd_settings_set"],
+        when: DEPLOY_TO_LIVE.stat.exists == true }
 
     - { role: "harden_sshd",
         PERMIT_ROOT_LOGIN: "no",
