@@ -247,6 +247,11 @@
        - pre_tasks
 
   roles:
+    - { role: "remove_dotfile_switches",
+        REMOVE_ALL: "no",
+        REMOVE_FILES_IN_LIST: "no",
+        FILE_DELETE_LIST: ["sshd_settings_set"] }
+
     - { role: "harden_sshd",
         PERMIT_ROOT_LOGIN: "no",
         USERNAME: "pi",
