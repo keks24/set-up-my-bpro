@@ -19,7 +19,7 @@
   tags:
     - mplayer
 
-- include_tasks: "mplayer.yml"
+- include_tasks: "ffmpeg.yml"
   when:
     - WITH_FFMPEG == "yes"
   tags:
