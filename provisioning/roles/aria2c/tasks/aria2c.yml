@@ -30,7 +30,7 @@
 # no "chars=punctuation" to avoid backslashes
 - name: generate random auth token
   set_fact:
-    RPC_SECRET: "{{ lookup('password', '/home/vagrant/credentials/aria2_rpc_secret chars=ascii_letters,digits,hexdigits') }}"
+    RPC_SECRET: "{{ lookup('password', '/home/vagrant/credentials/rpc_secret_aria2 chars=ascii_letters,digits,hexdigits') }}"
   tags:
     - aria2c
 
