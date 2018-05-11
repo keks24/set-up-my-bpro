@@ -101,13 +101,13 @@
   with_items:
     - { MOUNT_SRC: 'UUID="{{ ansible_devices.sda.partitions.sda1.uuid }}"',
         MOUNT_PATH: "/media/BACKUP",
-        MOUNT_FSTYPE: "ext4",
+        MOUNT_FSTYPE: "xfs",
         MOUNT_OPTIONS: "defaults,relatime",
         MOUNT_DUMP: "0",
         MOUNT_PASSNO: "2" }
     - { MOUNT_SRC: 'UUID="{{ ansible_devices.sda.partitions.sda2.uuid }}"',
         MOUNT_PATH: "/media/BANANAPI",
-        MOUNT_FSTYPE: "ext4",
+        MOUNT_FSTYPE: "xfs",
         MOUNT_OPTIONS: "defaults,relatime",
         MOUNT_DUMP: "0",
         MOUNT_PASSNO: "2" }
