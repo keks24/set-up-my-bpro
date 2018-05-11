@@ -97,7 +97,7 @@ Vagrant.configure("2") do |config|
                 ansible.pip_args = "-r /vagrant/requirements.txt"
 
                 #ansible.tags = ""
-                ansible.limit = "all"
+                ansible.limit = "live"
                 ansible.verbose = false
             end
         end
