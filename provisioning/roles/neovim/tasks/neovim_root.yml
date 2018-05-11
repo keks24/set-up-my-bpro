@@ -38,5 +38,6 @@
   shell: "$(command -v nvim) +PluginUpdate +qall"
   vars:
     ansible_ssh_pipelining: "no"
+  ignore_errors: "yes"
   tags:
     - neovim
