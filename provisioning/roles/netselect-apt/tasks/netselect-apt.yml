@@ -59,6 +59,20 @@
   tags:
     - netselect-apt
 
+- name: save fastest mirror
+  local_action:
+    module: "copy"
+    content: |
+      {{ FASTEST_MIRROR }}
+    dest: "/home/vagrant/fastest_mirror"
+    owner: "vagrant"
+    group: "vagrant"
+    mode: "0644"
+  when:
+    - FASTEST_MIRROR_SET.stat.exists == false
+  tags:
+    - netselect-apt
+
 - name: adapt new mirror list
   copy:
     src: "/tmp/sources.list"
