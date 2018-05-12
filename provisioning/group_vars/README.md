@@ -39,7 +39,7 @@ VAULT_SDA2_UUID: ""
 
 # unattended-upgrades
 ## postfix credentials
-VAULT_UU_RECIPIENT_EMAIL_ADDRESS: ""
+VAULT_RECIPIENT_EMAIL_ADDRESS: ""
 VAULT_POSTFIX_HOSTNAME: ""
 VAULT_POSTFIX_SMTP_FQDN: ""
 VAULT_POSTFIX_SMTP_PORT: ""
@@ -70,7 +70,7 @@ VAULT_SDA2_UUID: "004b127c-e94f-472d-bbd3-fc0c03357b75"
 
 # unattended-upgrades
 ## postfix credentials
-VAULT_UU_RECIPIENT_EMAIL_ADDRESS: "own_username@provider.tld"
+VAULT_RECIPIENT_EMAIL_ADDRESS: "own_username@provider.tld"
 VAULT_POSTFIX_HOSTNAME: "bananapi.local"
 VAULT_POSTFIX_SMTP_FQDN: "smtp.gmail.com"
 VAULT_POSTFIX_SMTP_PORT: "587"
