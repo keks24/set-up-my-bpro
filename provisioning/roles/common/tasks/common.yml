@@ -28,6 +28,7 @@
       - "iotop"
       - "iptables"
       - "iptables-persistent"
+      - "lftp"
       - "locate"
       - "lshw"
       - "lsof"
