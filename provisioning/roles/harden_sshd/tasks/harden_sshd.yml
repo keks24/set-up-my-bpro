@@ -22,11 +22,29 @@
   tags:
     - harden_sshd
 
-- name: generate random ssh port
+- name: check, if ssh port has been already generated
+  local_action:
+    module: "stat"
+    path: "/home/vagrant/new_ssh_port"
+  register: "SSH_PORT_GENERATED"
+  tags:
+    - harden_sshd
+
+- name: reuse already generated ssh port number
+  set_fact:
+    SSH_PORT_NUMBER: "{{ lookup('file', '/home/vagrant/new_ssh_port') }}"
+  when:
+    - SSHD_SETTINGS_SET.stat.exists == false
+    - SSH_PORT_GENERATED.stat.exists == true
+  tags:
+    - harden_sshd
+
+- name: generate random ssh port number
   set_fact:
     SSH_PORT_NUMBER: "{{ 49151 | random(start=1024) }}"
   when:
     - SSHD_SETTINGS_SET.stat.exists == false
+    - SSH_PORT_GENERATED.stat.exists == false
   tags:
     - harden_sshd
 
@@ -35,13 +53,13 @@
     module: "copy"
     content: |
       {{ SSH_PORT_NUMBER }}
-    dest: "/home/vagrant/new_ssh_port_local_test"
+    dest: "/home/vagrant/new_ssh_port"
     owner: "vagrant"
     group: "vagrant"
     mode: "0644"
   when:
     - SSHD_SETTINGS_SET.stat.exists == false
-    - LOCAL_TEST == "yes"
+    - SSH_PORT_GENERATED.stat.exists == false
   notify:
     - handler_reload_sshd
   tags:
@@ -56,23 +74,6 @@
   when:
     - SSHD_SETTINGS_SET.stat.exists == false
     - LOCAL_TEST == "yes"
-  notify:
-    - handler_reload_sshd
-  tags:
-    - harden_sshd
-
-- name: save generated ssh port number
-  local_action:
-    module: "copy"
-    content: |
-      {{ SSH_PORT_NUMBER }}
-    dest: "/home/vagrant/new_ssh_port_live"
-    owner: "vagrant"
-    group: "vagrant"
-    mode: "0644"
-  when:
-    - SSHD_SETTINGS_SET.stat.exists == false
-    - LOCAL_TEST == "no"
   notify:
     - handler_reload_sshd
   tags:
@@ -120,8 +121,8 @@
   with_items:
     - "{{ ALLOW_GROUP_LIST }}"
   when:
-    - SET_ALLOW_GROUPS_IN_LIST == "yes"
     - SSHD_SETTINGS_SET.stat.exists == false
+    - SET_ALLOW_GROUPS_IN_LIST == "yes"
   notify:
     - handler_reload_sshd
   tags:
