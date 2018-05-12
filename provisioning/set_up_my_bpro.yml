@@ -229,7 +229,7 @@
           - "                !! WARNING !! You neither will be able to run 'vagrant up --provision' nor 'vagrant provision' again because vagrant uses ssh port 22. execute: 'vagrant destroy -f && vagrant up --provision' to rebuild the setup"
           - " 2) /home/vagrant/credentials: generated credentials can be found on the 'bpro-provision-vm': vagrant ssh bpro-provision-vm"
           - " 3) become root: on the target server, first log in as user 'pi' and then execute 'sudo -i' to become root"
-          - " 4) /etc/apt/sources.list: check, if the selected mirror: {{ FASTEST_MIRROR }} on the 'bpro-development-vm' and on the target server is official and is not discontinued! For more information go to: 'https://www.debian.org/mirror/list'"
+          - " 4) /etc/apt/sources.list: check, if the selected mirror: {{ lookup('file', '/home/vagrant/fastest_mirror') }} on the 'bpro-development-vm' and on the target server is official and is not discontinued! For more information go to: 'https://www.debian.org/mirror/list'"
           - " 5) nfs share: check, if the setup was successfull by executing on the client: 'showmount --exports <ip_of_nfs_server>'"
           - "    on the server also make sure that the hard drive partitions - sda1 and sda2 - were sucessfully mounted: 'mount | grep sda', 'ls /media/{BACKUP,BANANAPI}/', 'vi /etc/fstab'"
       tags:
