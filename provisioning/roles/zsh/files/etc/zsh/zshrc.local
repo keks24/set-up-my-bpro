@@ -48,7 +48,6 @@ alias aria2c="aria2c -s 4 -x 8"
 alias dd="dd bs=64K status=progress"
 alias growisofs="growisofs -dvd-compat"
 alias ip="ip -c"
-LS_COLORS="mh=44;37"
 alias l="ls -CF"
 alias la="ls -a"
 alias listgroups="awk -F \":\" '{ printf \"Group name: %-20s GID: %-10s\n\", \$1, \$3 }' /etc/group | sort -nk 5"
@@ -65,8 +64,10 @@ alias tree="tree -F"
 ## set default text editor
 export EDITOR="$(command -v nvim)"
 export VISUAL="$(command -v nvim)"
-# location for x cache
+## location for x cache
 export XDG_CACHE_HOME="/tmp/$($(command -v id) -un)/.cache/"
+## set colours for hard and orphaned symlinks
+export LS_COLORS="mh=44;37:or=40;31;01"
 
 # output when opening shell
 ## list who is logged in
