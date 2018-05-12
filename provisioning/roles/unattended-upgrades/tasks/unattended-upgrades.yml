@@ -65,7 +65,7 @@
                 "origin=Debian,codename=${distro_codename}-proposed";
                 "origin=Debian Backports,codename=${distro_codename}-backports";
     insertbefore: '"origin=Debian,codename=\${distro_codename},label=Debian-Security";'
-    marker: "        # {mark} include all package updates"
+    marker: "        // {mark} include all package updates"
   notify:
     - handler_restart_unattended-upgrades
   tags:
