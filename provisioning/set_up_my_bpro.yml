@@ -202,7 +202,7 @@
 
     - { role: "purge_unnecessary_packages",
         PURGE_PACKAGES_IN_LIST: "yes",
-        PACKAGE_PURGE_LIST: ["nano", "vim-common", "vim-tiny"] }
+        PACKAGE_PURGE_LIST: ["command-not-found", "nano", "vim-common", "vim-tiny"] }
 
   post_tasks:
     - name: update file database
