@@ -101,3 +101,6 @@ To just view the file:
 (vm) $ cd "/vagrant"
 (vm) $ ansible-vault view "provisioning/group_vars/credentials.yml" --vault-password-file=.vault_pass
 ```
+
+# See also
+https://docs.ansible.com/ansible/2.4/vault.html
