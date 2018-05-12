@@ -36,8 +36,9 @@
     regexp: "{{ item.LINEINFILE_REGEXP }}"
     line: "{{ item.LINEINFILE_LINE }}"
   with_items:
-    - { LINEINFILE_REGEXP: "(.)?.*127.0.0.1.*", LINEINFILE_LINE: "127.0.0.1        localhost localhost.localdomain {{ DOMAIN_NAMES }}" }
-    - { LINEINFILE_REGEXP: "(.)?.*127.0.1.1.*", LINEINFILE_LINE: "127.0.1.1        {{ HOSTNAME }}" }
+    - { LINEINFILE_REGEXP: "(.)?.*127.0.0.1.*", LINEINFILE_LINE: "127.0.0.1       localhost localhost.localdomain {{ DOMAIN_NAMES }}" }
+    - { LINEINFILE_REGEXP: "(.)?.*127.0.1.1.*", LINEINFILE_LINE: "127.0.1.1       {{ HOSTNAME }}" }
+    - { LINEINFILE_REGEXP: "(.)?.*::1.*", LINEINFILE_LINE: "::1             localhost ip6-localhost ip6-loopback {{ HOSTNAME }}" }
   when:
     - HOSTNAME_SET.stat.exists == false
   tags:
