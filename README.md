@@ -19,8 +19,9 @@ dynamic_motd_content_set
 fastest_mirror_set
 host_keys_generated
 hostname_set
+root_password_set
 ssh_banner_content_set
-sshd_settings_local_test_set
+sshd_settings_set
 static_motd_content_set
 tmux_mem_cpu_load_compiled
 webui_aria2_repository_content_copied
