@@ -54,3 +54,17 @@
     state: "{{ PACKAGE_STATE }}"
   tags:
     - common
+
+- name: set up cronjob for file database update
+  cron:
+    name: "update file database every day"
+    minute: "0"
+    hour: "0"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "updatedb"
+    user: "root"
+    state: "present"
+  tags:
+    - common
