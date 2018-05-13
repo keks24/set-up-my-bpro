@@ -45,6 +45,7 @@
     name: "{{ USERNAME }}"
     group: "{{ USERNAME }}"
     groups:
+      - "adm"
       - "audio"
       - "dialout"
       - "netdev"
@@ -64,5 +65,20 @@
   when:
     - USERNAME != "root"
     - SUDO_USER == "yes"
+  tags:
+    - create_user_and_group
+
+- name: prepare directory for authorised keys
+  file:
+    path: "/home/{{ USERNAME }}/{{ item.FILE_PATH }}"
+    owner: "{{ USERNAME }}"
+    group: "{{ USERNAME }}"
+    mode: "{{ item.FILE_MODE }}"
+    state: "{{ item.FILE_STATE }}"
+  with_items:
+    - { FILE_PATH: ".ssh/", FILE_MODE: "0755", FILE_STATE: "directory" }
+    - { FILE_PATH: ".ssh/authorized_keys", FILE_MODE: "0600", FILE_STATE: "touch" }
+  when:
+    - USERNAME != "root"
   tags:
     - create_user_and_group
