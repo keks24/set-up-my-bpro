@@ -76,7 +76,7 @@
     mode: "{{ item.FILE_MODE }}"
     state: "{{ item.FILE_STATE }}"
   with_items:
-    - { FILE_PATH: ".ssh/", FILE_MODE: "0755", FILE_STATE: "directory" }
+    - { FILE_PATH: ".ssh/", FILE_MODE: "0700", FILE_STATE: "directory" }
     - { FILE_PATH: ".ssh/authorized_keys", FILE_MODE: "0600", FILE_STATE: "touch" }
   when:
     - USERNAME != "root"
