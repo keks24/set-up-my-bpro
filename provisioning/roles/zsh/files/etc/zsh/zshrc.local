@@ -30,6 +30,20 @@ precmd()
 }
 PROMPT_COMMAND+='$(command -v tput) bel;'
 
+## improved less
+### syntax highlighting
+lessh()
+{
+    export LESSOPEN="| /usr/bin/src-hilite-lesspipe.sh %s"
+    less "${@}"
+}
+### get information from binary files
+lessp()
+{
+    export LESSOPEN="| /usr/bin/lesspipe %s"
+    less "${@}"
+}
+
 # prompt shell
 ## colour
 if [[ $($(command -v id) -u) == 0 ]]
@@ -68,6 +82,8 @@ export VISUAL="$(command -v nvim)"
 export XDG_CACHE_HOME="/tmp/$($(command -v id) -un)/.cache/"
 ## set colours for hard and orphaned symlinks
 export LS_COLORS="mh=44;37:or=40;31;01"
+## less: syntax highlighting
+export LESS="-R -M --shift 5"
 
 # output when opening shell
 ## list who is logged in
