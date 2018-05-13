@@ -85,7 +85,7 @@
     state: "{{ item.FILE_STATE }}"
   with_items:
     - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/logs/aria2/", FILE_MODE: "0755", FILE_STATE: "directory" }
-    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/logs/aria2/aria2c.log", FILE_MODE: "0644", FILE_STATE: "touch" }
+    - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/logs/aria2/aria2c.log", FILE_MODE: "0640", FILE_STATE: "touch" }
     - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/etc/aria2/", FILE_MODE: "0755", FILE_STATE: "directory" }
     - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/htdocs/.downloads/", FILE_MODE: "0755", FILE_STATE: "directory" }
     - { FILE_PATH: "/var/www/{{ DOMAIN_NAME }}/private/.aria2_session.gz", FILE_MODE: "0644", FILE_STATE: "touch" }
