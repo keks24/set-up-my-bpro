@@ -111,8 +111,8 @@
   template:
     src: "templates/etc/logrotate.d/aria2.j2"
     dest: "/etc/logrotate.d/aria2"
-    owner: "{{ APACHE_USERNAME }}"
-    group: "{{ APACHE_USERNAME }}"
+    owner: "root"
+    group: "root"
     mode: "0644"
   tags:
     - aria2c
