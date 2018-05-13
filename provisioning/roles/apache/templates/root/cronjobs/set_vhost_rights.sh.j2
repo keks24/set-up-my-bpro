@@ -19,5 +19,5 @@
 directory_path=$($(command -v dirname) ${0})
 script_name=$($(command -v basename) ${0})
 
-$(command -v logger) -s "${directory_path}/${script_name}: executed"
-$(command -v chown) -R {{ APACHE_USERNAME }}:{{ APACHE_USERNAME }} /var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/*
+$(command -v logger) --stderr "${directory_path}/${script_name}: executed"
+$(command -v chown) --recursive {{ APACHE_USERNAME }}:{{ APACHE_USERNAME }} /var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/*
