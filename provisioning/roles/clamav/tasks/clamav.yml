@@ -93,7 +93,7 @@
         CRONJOB_HOUR: "6",
         CRONJOB_DAY: "*",
         CRONJOB_MONTH: "*",
-        CRONJOB_WEEKDAY: "7",
+        CRONJOB_WEEKDAY: "5",
         CRONJOB_JOB: "/root/.cronjobs/clamscan.sh" }
   tags:
     - clamav
