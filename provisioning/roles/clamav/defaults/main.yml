@@ -22,3 +22,7 @@ CACHE_VALID_TIME: "86400"
 # clamav settings
 CLAMAV_USERNAME: "clamav"
 INFECTED_FILES_DIRECTORY: "/usr/local/etc/clamav/infected_files/"
+
+# logrotate settings
+LOGROTATE_USERNAME: "clamav"
+LOGROTATE_GROUP: "adm"

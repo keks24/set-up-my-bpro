@@ -69,6 +69,26 @@
   tags:
     - clamav
 
+- name: set up logrotate
+  template:
+    src: "templates/etc/logrotate.d/clamscan.j2"
+    dest: "/etc/logrotate.d/clamscan"
+    owner: "{{ LOGROTATE_USERNAME }}"
+    group: "{{ LOGROTATE_GROUP }}"
+    mode: "0644"
+  tags:
+    - clamav
+
+- name: create empty log file
+  file:
+    path: "/var/log/clamav/clamscan.log"
+    owner: "{{ LOGROTATE_USERNAME }}"
+    group: "{{ LOGROTATE_GROUP }}"
+    mode: "0640"
+    state: "touch"
+  tags:
+    - clamav
+
 - name: set up cronjobs for root user
   cron:
     name: "{{ item.CRONJOB_NAME }}"
