@@ -41,6 +41,7 @@
       - "ntpdate"
       - "psmisc"
       - "rsync"
+      - "source-highlight"
       - "smartmontools"
       - "sudo"
       - "tree"
