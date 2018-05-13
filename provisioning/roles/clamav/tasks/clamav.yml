@@ -88,12 +88,12 @@
         CRONJOB_MONTH: "*",
         CRONJOB_WEEKDAY: "*",
         CRONJOB_JOB: "$(command -v clamav-unofficial-sigs)" }
-    - { CRONJOB_NAME: "scan for viruses on every friday",
+    - { CRONJOB_NAME: "scan for viruses every month",
         CRONJOB_MINUTE: "0",
         CRONJOB_HOUR: "6",
         CRONJOB_DAY: "*",
-        CRONJOB_MONTH: "*",
-        CRONJOB_WEEKDAY: "5",
+        CRONJOB_MONTH: "1",
+        CRONJOB_WEEKDAY: "*",
         CRONJOB_JOB: "/root/.cronjobs/clamscan.sh" }
   tags:
     - clamav
