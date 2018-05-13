@@ -45,6 +45,7 @@
       - "source-highlight"
       - "smartmontools"
       - "sudo"
+      - "tig"
       - "tree"
       - "unzip"
       - "w3m"
