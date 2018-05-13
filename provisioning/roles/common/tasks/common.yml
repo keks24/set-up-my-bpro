@@ -63,7 +63,7 @@
     day: "*"
     month: "*"
     weekday: "*"
-    job: "updatedb"
+    job: "$(command -v updatedb)"
     user: "root"
     state: "present"
   tags:
