@@ -82,7 +82,7 @@ export VISUAL="$(command -v nvim)"
 export XDG_CACHE_HOME="/tmp/$($(command -v id) -un)/.cache/"
 ## set colours for hard and orphaned symlinks
 export LS_COLORS="mh=44;37:or=40;31;01"
-## less: syntax highlighting
+## less: enable syntax highlighting
 export LESS="-R -M --shift 5"
 
 # output when opening shell
