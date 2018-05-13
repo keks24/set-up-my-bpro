@@ -20,7 +20,7 @@ console-log-level=notice
 dir=/var/www/aria2ui.bananapi.local/htdocs/.downloads/
 interface={{ INTERFACE }}
 log-level=info
-log=/var/log/aria2/aria2c.log
+log=/var/www/{{ DOMAIN_NAME }}/logs/aria2/aria2c.log
 
 {% if USE_SYSTEMD_SERVICE_FILE == "yes" %}
 # rpc options
