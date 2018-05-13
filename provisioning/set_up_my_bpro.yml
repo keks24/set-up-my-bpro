@@ -117,7 +117,7 @@
         DEFAULT_FIND_TIME: "3600" }
 
     - { role: "clamav",
-        INFECTED_FILES_DIRECTORY: "/usr/local/etc/clamav/infected_files/" }
+        INFECTED_FILES_DIRECTORY: "/usr/local/etc/clamav/infected_files" }
 
     - { role: "ssh_banner",
         FONT_NAME: "slant",
