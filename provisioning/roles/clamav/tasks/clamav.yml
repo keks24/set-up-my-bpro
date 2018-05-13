@@ -73,8 +73,8 @@
   template:
     src: "templates/etc/logrotate.d/clamscan.j2"
     dest: "/etc/logrotate.d/clamscan"
-    owner: "{{ LOGROTATE_USERNAME }}"
-    group: "{{ LOGROTATE_GROUP }}"
+    owner: "root"
+    group: "root"
     mode: "0644"
   tags:
     - clamav
