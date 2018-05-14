@@ -9,7 +9,7 @@ testing:
 
 !! use "lynis" to test security and stuff !!
 
-
+install lesspipe from repository: https://github.com/wofr06/lesspipe
 document usage and make "README.md" fancy
 
 !! find another way to manipulate variables, current solution is to set them globally in "set_up_armbian.yml" ("import_role" with "vars" does not work at the moment: https://github.com/ansible/ansible/issues/18341)
