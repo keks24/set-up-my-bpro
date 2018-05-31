@@ -27,7 +27,7 @@
 
 - name: set up cronjob for each day at 6pm for root user
   cron:
-    name: 'set owner and group rights for "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/"'
+    name: 'set owner and group rights for "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/" every day at 6pm'
     minute: "0"
     hour: "18"
     job: "/root/.cronjobs/set_vhost_rights_{{ WWW_PREFIX }}{{ DOMAIN_NAME }}.sh"
