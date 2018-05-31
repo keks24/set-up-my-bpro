@@ -1,0 +1,44 @@
+---
+- name: install tools to improve less
+  package:
+    name:
+      - "file"
+      - "imagemagick"
+      - "source-highlight"
+    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+    update_cache: "yes"
+    state: "{{ PACKAGE_STATE }}"
+  tags:
+    - common
+
+- name: clone lesspipe repository
+  git:
+    repo: "https://github.com/wofr06/lesspipe.git"
+    dest: "/usr/local/share/git/lesspipe/"
+    force: "yes"
+  tags:
+    - common
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/lesspipe/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - common
+
+- name: copy shell script and man page file
+  copy:
+    src: "/usr/local/share/git/lesspipe/{{ item.COPY_SOURCE }}"
+    dest: "/usr/local/{{ item.COPY_DESTINATION }}"
+    owner: "root"
+    group: "staff"
+    mode: "{{ item.COPY_MODE }}"
+    remote_src: "yes"
+  with_items:
+    - { COPY_SOURCE: "lesspipe.sh", COPY_DESTINATION: "bin/lesspipe", COPY_MODE: "0755" }
+    - { COPY_SOURCE: "lesspipe.1", COPY_DESTINATION: "share/man/man1/", COPY_MODE: "0644" }
+  tags:
+    - common
