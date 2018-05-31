@@ -38,3 +38,9 @@
     name: "clamav-daemon.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_clamav-daemon
+  systemd:
+    name: "clamav-daemon.service"
+    daemon_reload: "yes"
+    enabled: "no"

@@ -34,3 +34,8 @@
   service:
     name: "aria2c.service"
     enabled: "yes"
+
+- name: handler_disable_aria2c
+  service:
+    name: "aria2c.service"
+    enabled: "no"

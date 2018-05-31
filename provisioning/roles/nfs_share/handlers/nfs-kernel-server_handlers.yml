@@ -45,5 +45,11 @@
     daemon_reload: "yes"
     enabled: "yes"
 
+- name: handler_disable_nfs-kernel-server
+  systemd:
+    name: "nfs-kernel-server.service"
+    daemon_reload: "yes"
+    enabled: "no"
+
 - name: handler_reexport_nfs-kernel-server
   shell: "$(command -v exportfs) -r"

@@ -38,3 +38,9 @@
     name: "ddclient.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_ddclient
+  systemd:
+    name: "ddclient.service"
+    daemon_reload: "yes"
+    enabled: "no"

@@ -44,3 +44,9 @@
     name: "sshd.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_sshd
+  systemd:
+    name: "sshd.service"
+    daemon_reload: "yes"
+    enabled: "no"

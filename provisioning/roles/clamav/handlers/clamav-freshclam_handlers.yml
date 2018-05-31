@@ -38,3 +38,9 @@
     name: "clamav-freshclam.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_clamav-freshclam
+  systemd:
+    name: "clamav-freshclam.service"
+    daemon_reload: "yes"
+    enabled: "no"

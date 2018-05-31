@@ -38,3 +38,9 @@
     name: "unattended-upgrades.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_unattended-upgrades
+  systemd:
+    name: "unattended-upgrades.service"
+    daemon_reload: "yes"
+    enabled: "no"

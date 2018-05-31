@@ -38,3 +38,9 @@
     name: "aria2c.service"
     daemon_reload: "yes"
     enabled: "yes"
+
+- name: handler_disable_aria2c
+  systemd:
+    name: "aria2c.service"
+    daemon_reload: "yes"
+    enabled: "no"

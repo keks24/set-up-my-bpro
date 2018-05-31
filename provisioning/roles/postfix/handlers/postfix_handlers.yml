@@ -45,5 +45,11 @@
     daemon_reload: "yes"
     enabled: "yes"
 
+- name: handler_disable_postfix
+  systemd:
+    name: "postfix.service"
+    daemon_reload: "yes"
+    enabled: "no"
+
 - name: handler_check_postfix
   shell: "$(command -v postfix) -c /etc/postfix check"
