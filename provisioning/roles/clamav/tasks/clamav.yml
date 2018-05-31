@@ -25,9 +25,9 @@
     update_cache: "yes"
     state: "{{ PACKAGE_STATE }}"
   notify:
-    - handler_enable_clamav-daemon
+    - handler_disable_clamav-daemon
     - handler_enable_clamav-freshclam
-    - handler_restart_clamav-daemon
+    - handler_stop_clamav-daemon
     - handler_restart_clamav-freshclam
   tags:
     - clamav
@@ -44,8 +44,8 @@
 # has to be started in the background otherwise it hangs up
 - name: download unofficial virus signature databases
   shell: "$(command -v clamav-unofficial-sigs) &"
-  notify:
-    - handler_restart_clamav-daemon
+  #notify:
+  #  - handler_restart_clamav-daemon
   tags:
     - clamav
 
