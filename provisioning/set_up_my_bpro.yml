@@ -32,7 +32,7 @@
       tags:
         - pre_tasks
 
-    - name: install python packages
+    - name: install python packages for provisioning via ansible
       raw: apt-get install python python3
       tags:
         - pre_tasks
