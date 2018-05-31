@@ -16,8 +16,10 @@
 # limitations under the License.                                            #
 #############################################################################
 
-directory_path=$($(command -v dirname) ${0})
+script_directory_path=$($(command -v dirname) ${0})
 script_name=$($(command -v basename) ${0})
+infected_files_directory_path="{{ INFECTED_FILES_DIRECTORY }}"
+log_file="/var/log/clamav/clamscan.log"
 
 $(command -v logger) --stderr "${directory_path}/${script_name}: executed"
-$(command -v clamscan) --recursive --infected --move="{{ INFECTED_FILES_DIRECTORY }}" --log="/var/log/clamav/clamscan.log" "/"
+$(command -v clamscan) --recursive --infected --move="${infected_files_directory_path}" --log="${log_file}" "/"
