@@ -78,7 +78,7 @@
       when:
         - ROOT_PASSWORD_SET.stat.exists == false
       tags:
-        - netselect-apt
+        - pre_tasks
 
   roles:
     - { role: "remove_dotfile_switches",
