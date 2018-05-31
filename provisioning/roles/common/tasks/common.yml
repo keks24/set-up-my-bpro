@@ -22,6 +22,7 @@
       - "autojump"
       - "cronolog"
       - "dnsutils"
+      - "file"
       - "git"
       - "hdparm"
       - "htop"
