@@ -51,7 +51,7 @@
 
 - name: create directory for infected files
   file:
-    path: "{{ INFECTED_FILES_DIRECTORY }}"
+    path: "{{ INFECTED_FILES_DIRECTORY }}/"
     owner: "{{ CLAMAV_USERNAME }}"
     group: "{{ CLAMAV_USERNAME }}"
     mode: "0750"
