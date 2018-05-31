@@ -32,6 +32,11 @@
       tags:
         - pre_tasks
 
+    - name: install python packages
+      raw: apt-get install python python3
+      tags:
+        - pre_tasks
+
     - name: create directory for ansible dotfile switches
       file:
         path: "/usr/local/etc/.ansible_dotfile_switches"
