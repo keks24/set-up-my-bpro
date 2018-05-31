@@ -56,7 +56,6 @@
     dest: "/etc/apache2/sites-enabled/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}.conf"
     owner: "root"
     group: "root"
-    mode: "0777"
     state: "link"
   notify:
     - handler_reload_apache

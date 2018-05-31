@@ -31,7 +31,6 @@
     dest: "/home/{{ USERNAME }}/.gitconfig.d/gitalias.txt"
     owner: "{{ USERNAME }}"
     group: "{{ USERNAME }}"
-    mode: "0777"
     state: "link"
   tags:
     - gitalias

@@ -208,7 +208,6 @@
     dest: "/var/www/{{ DOMAIN_NAME }}/etc/apache2/conf-enabled/secure_webui-aria2_config.conf"
     owner: "{{ APACHE_USERNAME }}"
     group: "{{ APACHE_USERNAME }}"
-    mode: "0777"
     state: "link"
   notify:
     - handler_reload_apache

@@ -66,7 +66,6 @@
     dest: "{{ item.FILE_DEST }}"
     owner: "{{ item.FILE_OWNER }}"
     group: "{{ item.FILE_GROUP }}"
-    mode: "0777"
     state: "link"
   with_items:
       - { FILE_SRC: "/media/BACKUP", FILE_DEST: "/root/BACKUP", FILE_OWNER: "root", FILE_GROUP: "root" }
