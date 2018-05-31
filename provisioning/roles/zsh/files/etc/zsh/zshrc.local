@@ -40,7 +40,7 @@ lessh()
 ### get information from binary files
 lessp()
 {
-    export LESSOPEN="| /usr/bin/lesspipe %s"
+    export LESSOPEN="| /usr/local/bin/lesspipe %s"
     less "${@}"
 }
 
