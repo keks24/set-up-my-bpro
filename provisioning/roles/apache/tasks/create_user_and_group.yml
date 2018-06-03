@@ -30,7 +30,7 @@
     groups:
       - "ssh"
     password: "{{ lookup('password', '/home/vagrant/credentials/password_sftp_{{ APACHE_USERNAME }} chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
-    shell: "/bin/bash"
+    shell: "/usr/sbin/nologin"
     home: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/"
     update_password: "on_create"
     createhome: "no"
