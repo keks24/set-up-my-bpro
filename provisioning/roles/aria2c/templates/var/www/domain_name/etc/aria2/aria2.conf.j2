@@ -17,7 +17,7 @@
 
 # aria2c
 console-log-level=notice
-dir=/var/www/aria2ui.bananapi.local/htdocs/.downloads
+dir=/var/www/{{ DOMAIN_NAME }}/htdocs/.downloads
 interface={{ INTERFACE }}
 log-level=notice
 log=/var/www/{{ DOMAIN_NAME }}/logs/aria2/aria2c.log
@@ -34,7 +34,7 @@ rpc-secret={{ RPC_SECRET }}
 continue=true
 auto-save-interval=30
 http-accept-gzip=true
-netrc-path=/var/www/aria2ui.bananapi.local/private/.netrc
+netrc-path=/var/www/{{ DOMAIN_NAME }}/private/.netrc
 #on-download-complete=<command>
 #on-download-error=<command>
 #on-download-pause=<command>
@@ -47,8 +47,8 @@ min-split-size=20M
 split=8
 # --------------------------
 #deferred-input=true
-input-file=/var/www/aria2ui.bananapi.local/private/.aria2_session.gz
-save-session=/var/www/aria2ui.bananapi.local/private/.aria2_session.gz
+input-file=/var/www/{{ DOMAIN_NAME }}/private/.aria2_session.gz
+save-session=/var/www/{{ DOMAIN_NAME }}/private/.aria2_session.gz
 # --------------------------
 
 # torrent
@@ -65,8 +65,8 @@ seed-time=30
 enable-dht=true
 enable-dht6=true
 dht-listen-port=6881-6999
-dht-file-path=/var/www/aria2ui.bananapi.local/private/.dht.dat
-dht-file-path6=/var/www/aria2ui.bananapi.local/private/.dht6.dat
+dht-file-path=/var/www/{{ DOMAIN_NAME }}/private/.dht.dat
+dht-file-path6=/var/www/{{ DOMAIN_NAME }}/private/.dht6.dat
 # --------------------------
 bt-force-encryption=true
 bt-require-crypto=true
