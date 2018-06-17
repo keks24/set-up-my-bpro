@@ -98,6 +98,10 @@
     - "tmpfs"
 
     - { role: "sudo",
+        USERNAME: "ansible",
+        SSH_PUBLIC_KEY: "{{ VAULT_ANSIBLE_SSH_PUBLIC_KEY }}" }
+
+    - { role: "sudo",
         USERNAME: "pi",
         SUDO_USER: "yes",
         RESTRICT_SU: "yes" }
