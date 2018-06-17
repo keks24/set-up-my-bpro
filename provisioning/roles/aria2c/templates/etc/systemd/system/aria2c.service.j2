@@ -18,7 +18,8 @@
 [Unit]
 Description=aria2c download manager
 Requires=network.target
-After=dhcpcd.service
+After=dhcpcd.service network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
