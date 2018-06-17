@@ -10,9 +10,9 @@ Any occuring errors can be ignored. Next connect with the vm:
 $ vagrant ssh bpro-provisioning-vm
 ```
 
-Inside of the vm, go to `/vagrant` and create the file `provisioning/group_vars/credentials.yml` via `ansible-vault`:
+Inside of the vm, go to `/vagrant/` and create the file `provisioning/group_vars/credentials.yml` via `ansible-vault`:
 ```bash
-(vm) $ cd "/vagrant"
+(vm) $ cd "/vagrant/"
 (vm) $ ansible-vault create "provisioning/group_vars/credentials.yml"
 ```
 ```
@@ -25,7 +25,7 @@ Save the password to the file `.vault_pass`:
 (vm) $ vi ".vault_pass"
 ```
 
-This is necessary since Ansible is executed within a vm, so it is not possible to have a interactive prompt. Using `ask_vault_pass` in the `vagrantfile` will not work!
+This is necessary since Ansible is executed within a vm, so it is not possible to have an interactive prompt. Using `ask_vault_pass` in the `vagrantfile` will not work!
 
 ## Variables
 Insert the following variables:
@@ -36,6 +36,7 @@ VAULT_SERVER_STATIC_IP_ADDRESS: ""
 VAULT_SERVER_NET_IP_ADDRESS: ""
 VAULT_SDA1_UUID: ""
 VAULT_SDA2_UUID: ""
+VAULT_ANSIBLE_SSH_PUBLIC_KEY: ""
 
 # unattended-upgrades
 ## postfix credentials
@@ -67,6 +68,7 @@ VAULT_SERVER_STATIC_IP_ADDRESS: "192.168.2.5"
 VAULT_SERVER_NET_IP_ADDRESS: "192.168.2.0/24"
 VAULT_SDA1_UUID: "845903da-a3b5-4673-be43-f368e35b8dba"
 VAULT_SDA2_UUID: "004b127c-e94f-472d-bbd3-fc0c03357b75"
+VAULT_ANSIBLE_SSH_PUBLIC_KEY: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINy+d2ktCs2AmQf354renMzW/oFGqmWBsQJzNPQ2xVWF ramon@lenovo"
 
 # unattended-upgrades
 ## postfix credentials
@@ -92,13 +94,13 @@ VAULT_LETS_ENCRYPT_EMAIL_ADDRESS: "own_username@provider.tld"
 
 Save and close the file. For future modifications one can use:
 ```bash
-(vm) $ cd "/vagrant"
+(vm) $ cd "/vagrant/"
 (vm) $ ansible-vault edit "provisioning/group_vars/credentials.yml" --vault-password-file=.vault_pass
 ```
 
 To just view the file:
 ```bash
-(vm) $ cd "/vagrant"
+(vm) $ cd "/vagrant/"
 (vm) $ ansible-vault view "provisioning/group_vars/credentials.yml" --vault-password-file=.vault_pass
 ```
 
