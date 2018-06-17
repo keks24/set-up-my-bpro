@@ -33,7 +33,7 @@
     shell: "/usr/sbin/nologin"
     home: "/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}/"
     update_password: "on_create"
-    createhome: "no"
+    create_home: "no"
     state: "present"
   tags:
     - apache
