@@ -41,7 +41,7 @@
   tags:
     - apache
 
-- include_tasks: "prepare_directory.yml"
+- include_tasks: "prepare_directories.yml"
   when:
     - APACHE_USERNAME != "www-data"
   tags:
