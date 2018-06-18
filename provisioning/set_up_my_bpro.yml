@@ -85,6 +85,39 @@
       tags:
         - pre_tasks
 
+    - name: create group "ansible"
+      group:
+        name: "ansible"
+        state: "present"
+      tags:
+        - pre_tasks
+
+    # create user "ansible" for future provisioning
+    - name: create user "ansible" with 20 characters random password
+      user:
+        name: "ansible"
+        group: "ansible"
+        groups:
+          - "sudo"
+        password: "{{ lookup('password', '/home/vagrant/credentials/password_privileged_user_ansible chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
+        shell: "/bin/bash"
+        home: "/home/ansible/"
+        update_password: "on_create"
+        create_home: "yes"
+        append: "yes"
+        state: "present"
+      tags:
+        - pre_tasks
+
+    - name: set authorised key for user "ansible"
+      authorized_key:
+        user: "ansible"
+        key: "{{ VAULT_ANSIBLE_SSH_PUBLIC_KEY }}"
+        exclusive: "yes"
+        state: "present"
+      tags:
+        - pre_tasks
+
   roles:
     - { role: "remove_dotfile_switches",
         REMOVE_ALL: "no",
@@ -96,10 +129,6 @@
         DOMAIN_NAMES: "bananapi.local" }
 
     - "tmpfs"
-
-    - { role: "sudo",
-        USERNAME: "ansible",
-        SSH_PUBLIC_KEY: "{{ VAULT_ANSIBLE_SSH_PUBLIC_KEY }}" }
 
     - { role: "sudo",
         USERNAME: "pi",

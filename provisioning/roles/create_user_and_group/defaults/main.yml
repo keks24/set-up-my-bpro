@@ -20,6 +20,3 @@ USERNAME: "keks24"
 
 # for (un)privileged users
 SUDO_USER: "no"
-
-# for user "ansible"
-SSH_PUBLIC_KEY: ""
