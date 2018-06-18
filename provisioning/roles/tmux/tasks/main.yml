@@ -19,9 +19,10 @@
   tags:
     - tmux
 
-- import_tasks: "tmux_plugin_tmux-mem-cpu-load.yml"
-  tags:
-    - tmux
+# custom - 20180618 - rfischer: do not install "tmux-mem-cpu-load". keep it for educational purposes
+#- import_tasks: "tmux_plugin_tmux-mem-cpu-load.yml"
+#  tags:
+#    - tmux
 
 - import_tasks: "tmux_plugin_tmux-resurrect.yml"
   tags:

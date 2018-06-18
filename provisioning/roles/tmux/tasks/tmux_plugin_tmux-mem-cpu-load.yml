@@ -15,110 +15,111 @@
 # limitations under the License.                                            #
 #############################################################################
 
-- name: clone tmux-mem-cpu-load repository
-  git:
-    repo: "https://github.com/thewtex/tmux-mem-cpu-load.git"
-    dest: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
-    force: "yes"
-  tags:
-    - tmux
-
-- name: correct owner and group rights
-  file:
-    path: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
-    owner: "root"
-    group: "staff"
-    recurse: "yes"
-    state: "directory"
-  tags:
-    - tmux
-
-- name: check, if tmux-mem-cpu-load has been compiled already
-  stat:
-    path: "/usr/local/etc/.ansible_dotfile_switches/tmux_mem_cpu_load_compiled"
-  register: "TMUX_MEM_CPU_LOAD_COMPILED"
-  tags:
-    - tmux
-
-- name: install tools to compile tmux-mem-cpu-load
-  package:
-    name:
-      - "cmake"
-      - "g++"
-      - "gcc"
-      - "make"
-    cache_valid_time: "{{ CACHE_VALID_TIME }}"
-    update_cache: "yes"
-    state: "{{ PACKAGE_STATE }}"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: generate makefile
-  shell: "$(command -v cmake) ."
-  args:
-    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
-    creates: "Makefile"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: compile binary
-  shell: "$(command -v make) -j{{ CPUS | quote }}"
-  args:
-    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
-    creates: "tmux-mem-cpu-load"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: copy binary
-  copy:
-    src: "/usr/local/share/git/tmux/tmux-mem-cpu-load/tmux-mem-cpu-load"
-    dest: "/usr/local/bin/"
-    owner: "root"
-    group: "staff"
-    mode: "0755"
-    remote_src: "yes"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: remove binary from repository
-  file:
-    path: "/usr/local/share/git/tmux/tmux-mem-cpu-load/tmux-mem-cpu-load"
-    state: "absent"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: remove tools
-  package:
-    name:
-      - "cmake"
-      - "g++"
-      - "gcc"
-      - "make"
-    purge: "yes"
-    state: "absent"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
-
-- name: create indicator
-  file:
-    path: "/usr/local/etc/.ansible_dotfile_switches/tmux_mem_cpu_load_compiled"
-    owner: "root"
-    group: "staff"
-    mode: "0644"
-    state: "touch"
-  when:
-    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
-  tags:
-    - tmux
+# custom - 20180618 - rfischer: do not install "tmux-mem-cpu-load". keep it for educational purposes
+#- name: clone tmux-mem-cpu-load repository
+#  git:
+#    repo: "https://github.com/thewtex/tmux-mem-cpu-load.git"
+#    dest: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
+#    force: "yes"
+#  tags:
+#    - tmux
+#
+#- name: correct owner and group rights
+#  file:
+#    path: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
+#    owner: "root"
+#    group: "staff"
+#    recurse: "yes"
+#    state: "directory"
+#  tags:
+#    - tmux
+#
+#- name: check, if tmux-mem-cpu-load has been compiled already
+#  stat:
+#    path: "/usr/local/etc/.ansible_dotfile_switches/tmux_mem_cpu_load_compiled"
+#  register: "TMUX_MEM_CPU_LOAD_COMPILED"
+#  tags:
+#    - tmux
+#
+#- name: install tools to compile tmux-mem-cpu-load
+#  package:
+#    name:
+#      - "cmake"
+#      - "g++"
+#      - "gcc"
+#      - "make"
+#    cache_valid_time: "{{ CACHE_VALID_TIME }}"
+#    update_cache: "yes"
+#    state: "{{ PACKAGE_STATE }}"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: generate makefile
+#  shell: "$(command -v cmake) ."
+#  args:
+#    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
+#    creates: "Makefile"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: compile binary
+#  shell: "$(command -v make) -j{{ CPUS | quote }}"
+#  args:
+#    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
+#    creates: "tmux-mem-cpu-load"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: copy binary
+#  copy:
+#    src: "/usr/local/share/git/tmux/tmux-mem-cpu-load/tmux-mem-cpu-load"
+#    dest: "/usr/local/bin/"
+#    owner: "root"
+#    group: "staff"
+#    mode: "0755"
+#    remote_src: "yes"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: remove binary from repository
+#  file:
+#    path: "/usr/local/share/git/tmux/tmux-mem-cpu-load/tmux-mem-cpu-load"
+#    state: "absent"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: remove tools
+#  package:
+#    name:
+#      - "cmake"
+#      - "g++"
+#      - "gcc"
+#      - "make"
+#    purge: "yes"
+#    state: "absent"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
+#
+#- name: create indicator
+#  file:
+#    path: "/usr/local/etc/.ansible_dotfile_switches/tmux_mem_cpu_load_compiled"
+#    owner: "root"
+#    group: "staff"
+#    mode: "0644"
+#    state: "touch"
+#  when:
+#    - TMUX_MEM_CPU_LOAD_COMPILED.stat.exists == false
+#  tags:
+#    - tmux
