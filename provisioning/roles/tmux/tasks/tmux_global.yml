@@ -52,7 +52,7 @@
   tags:
     - tmux
 
-- name: add empty configuration file to user skeleton
+- name: add configuration file to user skeleton
   file:
     path: "/etc/skel/.tmux.conf"
     owner: "root"
