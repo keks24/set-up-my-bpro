@@ -17,4 +17,4 @@
 
 dependencies:
   - role: "create_user_and_group"
-  - role: "prepare_directory"
+  - role: "prepare_directories"

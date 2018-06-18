@@ -16,4 +16,4 @@
 #############################################################################
 
 dependencies:
-  - role: "prepare_directory"
+  - role: "prepare_directories"
