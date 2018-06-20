@@ -56,6 +56,10 @@ fi
 # source
 ## autojump
 source "/usr/share/autojump/autojump.zsh"
+## zsh-autosuggestions
+source "/usr/local/share/git/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+## zsh-syntax-highlighting
+source "/usr/local/share/git/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # aliases
 alias aria2c="aria2c -s 4 -x 8"
