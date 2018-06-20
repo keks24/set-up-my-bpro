@@ -111,30 +111,29 @@
   tags:
     - zsh
 
-- name: copy zsh tab completion files
-  copy:
-    src: "/usr/local/share/git/zsh-completions/src/{{ item }}"
-    dest: "/usr/local/share/zsh/site-functions/"
+- name: check, if zsh-completions content has been already copied
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/zsh-completions_repository_content_copied"
+  register: "ZSH_COMPLETIONS_REPOSITORY_CONTENT"
+  tags:
+    - zsh
+
+- name: copy repository content
+  shell: "$(command -v cp) -R * /usr/local/share/zsh/site-functions/"
+  args:
+    chdir: "/usr/local/share/git/zsh-completions/src/"
+  when:
+    - ZSH_COMPLETIONS_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/zsh/site-functions/"
     owner: "root"
     group: "staff"
-    mode: "0644"
-    remote_src: "yes"
-  with_items:
-    - "_ack"
-    - "_ansible"
-    - "_ansible-galaxy"
-    - "_ansible-playbook"
-    - "_ansible-vault"
-    - "_bundle"
-    - "_chattr"
-    - "_cmake"
-    - "_dhcpcd"
-    - "_exportfs"
-    - "_lsattr"
-    - "_lsblk"
-    - "_shutdown"
-    - "_vagrant"
-    - "_wemux"
+    recurse: "yes"
+    state: "directory"
   tags:
     - zsh
 
@@ -146,7 +145,7 @@
     group: "staff"
     mode: "0644"
   with_fileglob:
-    - "files/usr/local/share/zsh/site-functions/*"
+    - "files/usr/local/share/zsh/site-functions/_*"
   tags:
     - zsh
 
@@ -158,5 +157,17 @@
   with_items:
     - { REPLACE_PATH: "/etc/default/useradd", REPLACE_REGEXP: "(.)?.*SHELL=.*", REPLACE_REPLACE: "SHELL=/bin/zsh" }
     - { REPLACE_PATH: "/etc/adduser.conf", REPLACE_REGEXP: "(.)?.*DSHELL=.*", REPLACE_REPLACE: "DSHELL=/bin/zsh" }
+  tags:
+    - zsh
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/zsh_completions_repository_content_copied"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - ZSH_COMPLETIONS_REPOSITORY_CONTENT.stat.exists == false
   tags:
     - zsh
