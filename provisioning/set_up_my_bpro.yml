@@ -188,12 +188,12 @@
 
     - { role: "tmux",
         USERNAME: "root",
-        WEMUX_HOST_USER: "pi" }
+        WEMUX_HOST_USER: "root" }
 
     - { role: "tmux",
         USERNAME: "pi",
         SUDO_USER: "yes",
-        WEMUX_HOST_USER: "pi" }
+        WEMUX_HOST_USER: "root" }
 
     - { role: "gitalias",
         USERNAME: "pi",
