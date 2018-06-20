@@ -19,6 +19,22 @@
   tags:
     - zsh
 
+- import_tasks: "zsh_grml_core.yml"
+  tags:
+    - zsh
+
+- import_tasks: "zsh_completions.yml"
+  tags:
+    - zsh
+
+- import_tasks: "zsh_plugin_syntax_highlighting.yml"
+  tags:
+    - zsh
+
+- import_tasks: "zsh_plugin_autosuggestions.yml"
+  tags:
+    - zsh
+
 - include_tasks: "zsh_root.yml"
   when:
     - USERNAME == "root"
