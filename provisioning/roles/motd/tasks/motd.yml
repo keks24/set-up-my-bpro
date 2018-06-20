@@ -64,6 +64,8 @@
     group: "staff"
     mode: "0644"
     state: "touch"
+  when:
+    - STATIC_MOTD_CONTENT_SET.stat.exists == false
   tags:
     - motd
 
