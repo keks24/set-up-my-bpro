@@ -89,6 +89,8 @@ export XDG_CACHE_HOME="/tmp/$($(command -v id) -un)/.cache/"
 export LS_COLORS="mh=44;37:or=40;31;01"
 ## less: enable syntax highlighting
 export LESS="-R -M --shift 5"
+## zsh-autosuggest: only use small buffer for strings
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 
 # output when opening shell
 ## list who is logged in
