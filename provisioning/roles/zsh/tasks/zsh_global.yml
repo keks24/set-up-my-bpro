@@ -83,6 +83,50 @@
   tags:
     - zsh
 
+- name: clone zsh-completions repository
+  git:
+    repo: "https://github.com/zsh-users/zsh-completions"
+    dest: "/usr/local/share/git/zsh-completions/"
+    force: "yes"
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/zsh-completions/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - zsh
+
+- name: copy zsh tab completion files
+  copy:
+    src: "/usr/local/share/git/zsh-completions/src/{{ items }}"
+    dest: "/usr/local/share/zsh/site-functions/"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    remote_src: "yes"
+  with_items:
+    - "_ack"
+    - "_ansible"
+    - "_ansible-galaxy"
+    - "_ansible-playbook"
+    - "_ansible-vault"
+    - "_bundle"
+    - "_chattr"
+    - "_cmake"
+    - "_dhcpcd"
+    - "_exportfs"
+    - "_lsattr"
+    - "_lsblk"
+    - "_shutdown"
+    - "_vagrant"
+  tags:
+    - zsh
+
 - name: add zsh configuration file to user skeleton
   copy:
     src: "files/etc/skel/zshrc"
