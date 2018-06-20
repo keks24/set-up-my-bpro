@@ -1,0 +1,36 @@
+---
+- name: clone grml's configuration repository
+  git:
+    repo: "https://github.com/grml/grml-etc-core.git"
+    dest: "/usr/local/share/git/zsh/grml-etc-core/"
+    force: "yes"
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/zsh/grml-etc-core/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - zsh
+
+- name: copy global zsh configuration files
+  copy:
+    src: "/usr/local/share/git/zsh/grml-etc-core/etc/zsh/{{ item }}"
+    dest: "/etc/zsh/"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    remote_src: "yes"
+  with_items:
+    - "keephack"
+    - "zlogin"
+    - "zlogout"
+    - "zprofile"
+    - "zshenv"
+    - "zshrc"
+  tags:
+    - zsh

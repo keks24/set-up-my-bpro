@@ -1,0 +1,56 @@
+---
+- name: clone zsh-completions repository
+  git:
+    repo: "https://github.com/zsh-users/zsh-completions"
+    dest: "/usr/local/share/git/zsh/zsh-completions/"
+    force: "yes"
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/zsh/zsh-completions/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - zsh
+
+- name: check, if zsh-completions content has been already copied
+  stat:
+    path: "/usr/local/etc/.ansible_dotfile_switches/zsh_completions_repository_content_copied"
+  register: "ZSH_COMPLETIONS_REPOSITORY_CONTENT"
+  tags:
+    - zsh
+
+- name: copy repository content
+  shell: "$(command -v cp) -R * /usr/local/share/zsh/site-functions/"
+  args:
+    chdir: "/usr/local/share/git/zsh/zsh-completions/src/"
+  when:
+    - ZSH_COMPLETIONS_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - zsh
+
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/zsh/site-functions/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
+  tags:
+    - zsh
+
+- name: create indicator
+  file:
+    path: "/usr/local/etc/.ansible_dotfile_switches/zsh_completions_repository_content_copied"
+    owner: "root"
+    group: "staff"
+    mode: "0644"
+    state: "touch"
+  when:
+    - ZSH_COMPLETIONS_REPOSITORY_CONTENT.stat.exists == false
+  tags:
+    - zsh
