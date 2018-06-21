@@ -625,7 +625,7 @@ set whichwrap+=<,>,h,l
     "let g:airline#extensions#tabline#left_alt_sep = '|'
 
     " vim-airline-theme
-    let g:airline_theme='bubblegum'
+    let g:airline_theme='term'
 
     " vim-obsession
     set statusline+=%{ObsessionStatus()}
