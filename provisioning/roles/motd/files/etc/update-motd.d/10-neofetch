@@ -16,10 +16,19 @@
 # limitations under the License.                                            #
 #############################################################################
 
-if [[ $(command -v neofetch 2>/dev/null) ]]
-then
-    $(command -v neofetch) --config "/usr/local/etc/neofetch/config.conf"
-else
-    echo -e "\e[01;31mcould not find command 'neofetch'.\e[0m"
-    exit 1
-fi
+command_list=(neofetch)
+checkCommands()
+{
+    for current_command in "${command_list[@]}"
+    do
+        if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
+        then
+            echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
+            exit 1
+        fi
+    done
+}
+
+checkCommands
+
+$(command -v neofetch) --config "/usr/local/etc/neofetch/config.conf"
