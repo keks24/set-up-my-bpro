@@ -65,6 +65,7 @@ source "/usr/local/share/git/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting
 alias aria2c="aria2c -s 4 -x 8"
 alias dd="dd bs=64K status=progress"
 alias growisofs="growisofs -dvd-compat"
+alias halt="echo 'Are you sure? Please run: /sbin/halt'"
 alias history="history -i"
 alias ip="ip -c"
 alias l="ls -vCF"
@@ -75,9 +76,12 @@ alias ll="ls -vl"
 alias ln="ln -v"
 alias mkdir="mkdir -p"
 alias path="echo ${PATH//:/'\n'}"
+alias poweroff="echo 'Are you sure? Please run: /sbin/poweroff'"
 alias rdesktop="rdesktop -g 1440x900 -P -z -x -l -r sound:off"
+alias reboot="echo 'Are you sure? Please run: /sbin/reboot'"
 alias rsync="rsync -aHAXx --numeric-ids --info=progress2 -e 'ssh -T -c aes256-gcm@openssh.com -o Compression=no -x'"
 alias tree="tree -F"
+alias shutdown="echo 'Are you sure? Please run: /sbin/shutdown'"
 
 # export
 ## set default text editor
@@ -91,6 +95,8 @@ export LS_COLORS="mh=44;37:or=40;31;01"
 export LESS="-R -M --shift 5"
 ## zsh-autosuggest: only use small buffer for strings
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+## do not include critical commands in history
+export HISTORY_IGNORE="(/sbin/halt*|/sbin/poweroff*|/sbin/reboot*|/sbin/shutdown*|halt*|poweroff*|reboot*|rm*|shutdown*|)"
 
 # output when opening shell
 ## list who is logged in
