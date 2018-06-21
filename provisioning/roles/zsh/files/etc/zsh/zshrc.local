@@ -102,7 +102,7 @@ export LESS="-R -M --shift 5"
 ## zsh-autosuggest: only use small buffer for strings
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 ## do not include critical commands in history
-export HISTORY_IGNORE="(/sbin/halt*|/sbin/poweroff*|/sbin/reboot*|/sbin/shutdown*|cd*|clear*|exit*|halt*|ls*|poweroff*|pwd*|reboot*|rm*|shutdown*)"
+export HISTORY_IGNORE="(/sbin/halt*|/sbin/poweroff*|/sbin/reboot*|/sbin/shutdown*|cd*|clear*|exit*|halt*|ls*|poweroff*|pwd*|reboot*|rm*|shutdown*|sudo*)"
 
 # output when opening shell
 ## list who is logged in
