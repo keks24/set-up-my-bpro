@@ -46,7 +46,7 @@
     replace: "{{ item.REPLACE_REPLACE }}"
   with_items:
     - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::MinimalSteps.*", REPLACE_REPLACE: 'Unattended-Upgrade::MinimalSteps "true";' }
-    - { REPLACE_REGEXP: '(.){2}?.*Unattended-Upgrade::Mail "root"', REPLACE_REPLACE: 'Unattended-Upgrade::Mail "{{ RECIPIENT_EMAIL_ADDRESS }}";' }
+    - { REPLACE_REGEXP: '(.){2}?.*Unattended-Upgrade::Mail.*"root"', REPLACE_REPLACE: 'Unattended-Upgrade::Mail "{{ RECIPIENT_EMAIL_ADDRESS }}";' }
     - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Remove-Unused-Dependencies.*", REPLACE_REPLACE: 'Unattended-Upgrade::Remove-Unused-Dependencies "true";' }
     - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Automatic-Reboot-WithUsers.*", REPLACE_REPLACE: 'Unattended-Upgrade::Automatic-Reboot-WithUsers "true";' }
     - { REPLACE_REGEXP: "(.){2}?.*Unattended-Upgrade::Automatic-Reboot-Time.*", REPLACE_REPLACE: 'Unattended-Upgrade::Automatic-Reboot-Time "03:00";' }
