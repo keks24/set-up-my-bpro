@@ -19,7 +19,7 @@
   tags:
     - zsh
 
-- import_tasks: "zsh_grml_core.yml"
+- import_tasks: "zsh_grml-etc-core.yml"
   tags:
     - zsh
 
@@ -27,11 +27,11 @@
   tags:
     - zsh
 
-- import_tasks: "zsh_plugin_syntax_highlighting.yml"
+- import_tasks: "zsh_plugin_zsh-syntax-highlighting.yml"
   tags:
     - zsh
 
-- import_tasks: "zsh_plugin_autosuggestions.yml"
+- import_tasks: "zsh_plugin_zsh-autosuggestions.yml"
   tags:
     - zsh
 
