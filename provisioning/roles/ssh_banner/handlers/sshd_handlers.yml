@@ -17,36 +17,36 @@
 
 - name: handler_start_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     state: "started"
 
 - name: handler_stop_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     state: "stopped"
 
 - name: handler_restart_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     state: "restarted"
 
 - name: handler_reload_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     state: "reloaded"
 
 - name: handler_enable_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     enabled: "yes"
 
 - name: handler_disable_sshd
   systemd:
-    name: "sshd.service"
+    name: "ssh.service"
     daemon_reload: "yes"
     enabled: "no"
