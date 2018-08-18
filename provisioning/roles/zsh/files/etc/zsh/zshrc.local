@@ -20,7 +20,7 @@
 dic()
 {
     input_string=${*// /+}
-    $(command -v w3m) -dump "http://pocket.dict.cc/?s=${input_string}" | $(command -v head) -n -6 | $(command -v tail) -n +6 | $(command -v tac)
+    w3m -dump "http://pocket.dict.cc/?s=${input_string}" | head -n -6 | tail -n +6 | tac
 }
 
 ## bash: execute bell when command is finished
@@ -28,7 +28,7 @@ precmd()
 {
     eval "${PROMPT_COMMAND}"
 }
-PROMPT_COMMAND+='$(command -v tput) bel;'
+PROMPT_COMMAND+='tput bel;'
 
 ## improved less
 ### syntax highlighting
@@ -52,7 +52,7 @@ zshaddhistory()
 
 # prompt shell
 ## colour
-if [[ $($(command -v id) -u) == 0 ]]
+if [[ $(id -u) == 0 ]]
 then
     zstyle ':prompt:grml:*:items:user' pre '%F{yellow}'
 else
@@ -93,7 +93,7 @@ alias shutdown="echo 'Are you sure? Please run: /sbin/shutdown'"
 export EDITOR="$(command -v nvim)"
 export VISUAL="$(command -v nvim)"
 ## location for x cache
-export XDG_CACHE_HOME="/tmp/$($(command -v id) -un)/.cache/"
+export XDG_CACHE_HOME="/tmp/$(id -un)/.cache/"
 ## set colours for hard and orphaned symlinks
 export LS_COLORS="mh=44;37:or=40;31;01"
 ## less: enable syntax highlighting
@@ -105,9 +105,9 @@ export HISTORY_IGNORE="(/sbin/halt*|/sbin/poweroff*|/sbin/reboot*|/sbin/shutdown
 
 # output when opening shell
 ## list who is logged in
-$(command -v who)
+who
 ## list tmux sessions
-if [[ $($(command -v pgrep) "tmux") ]]
+if [[ $(pgrep "tmux") ]]
 then
-    $(command -v tmux) ls
+    tmux ls
 fi

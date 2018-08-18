@@ -32,7 +32,7 @@
     - netselect-apt
 
 - name: find fastest mirror
-  shell: "$(command -v netselect-apt) {{ CURRENT_STABLE_CODENAME | quote }} -n"
+  shell: "/usr/bin/netselect-apt {{ CURRENT_STABLE_CODENAME | quote }} -n"
   args:
     chdir: "/tmp/"
     creates: "/tmp/sources.list"
@@ -42,7 +42,7 @@
     - netselect-apt
 
 - name: save output of fastest mirror url as variable
-  shell: "$(command -v awk) 'NR == 2 { print $2 }' sources.list"
+  shell: "/usr/bin/awk 'NR == 2 { print $2 }' sources.list"
   args:
     chdir: "/tmp/"
   register: "FASTEST_MIRROR"

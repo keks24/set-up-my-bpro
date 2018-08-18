@@ -41,7 +41,7 @@
     - zsh
 
 - name: copy repository content
-  shell: "$(command -v cp) -R * /usr/local/share/zsh/site-functions/"
+  shell: "/bin/cp -R * /usr/local/share/zsh/site-functions/"
   args:
     chdir: "/usr/local/share/git/zsh/zsh-completions/src/"
   when:

@@ -35,15 +35,15 @@ ARGS="--conf-path=${CONF} --enable-rpc=true --rpc-allow-origin-all=true --rpc-li
 USER="{{ APACHE_USERNAME }}"
 GROUP="{{ APACHE_USERNAME }}"
 
-if ! [[ -f ${ARIA2C} ]]
+if ! [[ -f "${ARIA2C}" ]]
 then
-    echo -e "\e[01;31mcould not find binary file: ${ARIA2C}\e[0m"
+    echo -e "\e[01;31mCould not find binary file: ${ARIA2C}\e[0m"
     exit 0
 fi
 
-if ! [[ -f ${CONF} ]]
+if ! [[ -f "${CONF}" ]]
 then
-    echo -e "\e[01;31mcould not find configuration file: ${CONF}\e[0m"
+    echo -e "\e[01;31mCould not find configuration file: ${CONF}\e[0m"
     exit 0
 fi
 
@@ -54,16 +54,16 @@ echo "${PIDFILE}"
 case "$1" in
     start)
         log_daemon_msg "starting ${NAME}" "${NAME}"
-        $(command -v start-stop-daemon) --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
+        /sbin/start-stop-daemon --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
         ;;
     stop)
         log_daemon_msg "stopping ${NAME}" "${NAME}"
-        $(command -v start-stop-daemon) --stop --quiet --pidfile ${PIDFILE}
+        /sbin/start-stop-daemon --stop --quiet --pidfile ${PIDFILE}
         ;;
     restart)
         log_daemon_msg "restarting ${NAME}" "${NAME}"
-        $(command -v start-stop-daemon) --stop --retry 5 --quiet --pidfile ${PIDFILE}
-        $(command -v start-stop-daemon) --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
+        /sbin/start-stop-daemon --stop --retry 5 --quiet --pidfile ${PIDFILE}
+        /sbin/start-stop-daemon --start --quiet -b -m --pidfile ${PIDFILE} --chuid ${USER}:${GROUP} --startas ${ARIA2C} -- ${ARGS}
         ;;
     status)
         status_of_proc -p ${PIDFILE} ${ARIA2C} ${NAME} && exit 0 || exit ${?}

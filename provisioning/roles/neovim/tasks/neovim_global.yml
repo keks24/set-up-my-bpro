@@ -25,7 +25,7 @@
     - neovim
 
 - name: set neovim as default editor
-  shell: "$(command -v update-alternatives) --set editor $(command -v nvim)"
+  shell: "/usr/bin/update-alternatives --set editor /usr/bin/nvim"
   tags:
     - neovim
 

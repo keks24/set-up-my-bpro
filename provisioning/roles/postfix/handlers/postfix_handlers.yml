@@ -52,4 +52,4 @@
     enabled: "no"
 
 - name: handler_check_postfix
-  shell: "$(command -v postfix) -c /etc/postfix check"
+  shell: "/usr/sbin/postfix -c /etc/postfix check"

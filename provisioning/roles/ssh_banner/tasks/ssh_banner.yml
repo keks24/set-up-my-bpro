@@ -34,7 +34,7 @@
     - ssh_banner
 
 - name: generate and save new ssh banner
-  shell: "$(command -v figlet) -f {{ FONT_NAME | quote }} {{ BANNER_TEXT | quote }} > ssh_banner.net"
+  shell: "/usr/bin/figlet -f {{ FONT_NAME | quote }} {{ BANNER_TEXT | quote }} > ssh_banner.net"
   args:
     chdir: "/etc/"
     creates: "/etc/ssh_banner.net"

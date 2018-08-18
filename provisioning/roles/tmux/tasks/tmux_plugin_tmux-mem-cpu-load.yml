@@ -57,7 +57,7 @@
 #    - tmux
 #
 #- name: generate makefile
-#  shell: "$(command -v cmake) ."
+#  shell: "/usr/bin/make ."
 #  args:
 #    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
 #    creates: "Makefile"
@@ -67,7 +67,7 @@
 #    - tmux
 #
 #- name: compile binary
-#  shell: "$(command -v make) -j{{ CPUS | quote }}"
+#  shell: "/usr/bin/make -j{{ CPUS | quote }}"
 #  args:
 #    chdir: "/usr/local/share/git/tmux/tmux-mem-cpu-load/"
 #    creates: "tmux-mem-cpu-load"

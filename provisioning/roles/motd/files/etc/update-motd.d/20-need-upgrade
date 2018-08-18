@@ -16,11 +16,12 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(apt-get awk sort wc)
+command_list=(apt-get awk sort wc unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"
     do
+        unalias ${current_command} 2>/dev/null
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
             echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
@@ -31,15 +32,15 @@ checkCommands()
 
 checkCommands
 
-upgradeable_package_count=$($(command -v apt-get) --simulate --quiet=2 upgrade | $(command -v awk) '{ print $2 }' | $(command -v sort) -u | $(command -v wc) -l)
-removable_package_count=$($(command -v apt-get) --simulate --quiet=2 autoremove | $(command -v awk) '{ print $2 }' | $(command -v sort) -u | $(command -v wc) -l)
+upgradeable_package_count=$(/usr/bin/apt-get --simulate --quiet=2 upgrade | /usr/bin/awk '{ print $2 }' | /usr/bin/sort -u | /usr/bin/wc -l)
+removable_package_count=$(/usr/bin/apt-get --simulate --quiet=2 autoremove | /usr/bin/awk '{ print $2 }' | /usr/bin/sort -u | /usr/bin/wc -l)
 
 if (( ${removable_package_count} > 0 ))
 then
-    echo -e "\e[01;33m[${removable_package_count}] dependency packages are not needed anymore! (execute as root: $(command -v apt-get) autoremove)\e[0m"
+    echo -e "\e[01;33m[${removable_package_count}] dependency packages are not needed anymore! (execute as root: /usr/bin/apt-get autoremove)\e[0m"
 fi
 
 if (( ${upgradeable_package_count} > 0 ))
 then
-    echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: $(command -v apt-get) upgrade)\e[0m"
+    echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: /usr/bin/apt-get) upgrade)\e[0m"
 fi

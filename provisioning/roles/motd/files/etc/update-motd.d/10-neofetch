@@ -16,11 +16,12 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(neofetch)
+command_list=(neofetch unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"
     do
+        unalias ${current_command}
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
             echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
@@ -31,4 +32,4 @@ checkCommands()
 
 checkCommands
 
-$(command -v neofetch) --config "/usr/local/etc/neofetch/config.conf"
+/usr/bin/neofetch --config "/usr/local/etc/neofetch/config.conf"

@@ -69,7 +69,7 @@
     day: "*"
     month: "*"
     weekday: "*"
-    job: "$(command -v updatedb)"
+    job: "/usr/bin/updatedb"
     user: "root"
     state: "present"
   tags:

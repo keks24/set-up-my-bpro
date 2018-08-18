@@ -39,7 +39,7 @@
     - harden_sshd
 
 - name: generate host keys
-  shell: "$(command -v ssh-keygen) -qt {{ item.SHELL_SSH_KEY_TYPE | quote }} -b {{ item.SHELL_SSH_KEY_BITS | quote }} -f {{ item.SHELL_SSH_KEY_FILE | quote }} -N ''"
+  shell: "/usr/bin/ssh-keygen -qt {{ item.SHELL_SSH_KEY_TYPE | quote }} -b {{ item.SHELL_SSH_KEY_BITS | quote }} -f {{ item.SHELL_SSH_KEY_FILE | quote }} -N ''"
   args:
     chdir: "/etc/ssh/"
   with_items:

@@ -17,9 +17,9 @@
 
 # tmux
 ## attach or create tmux session
-if [[ $($(command -v pgrep) -u "$($(command -v id) -un)" "tmux") ]]
+if [[ $(/usr/bin/pgrep -u "$(/usr/bin/id -un)" "tmux") ]]
 then
-    $(command -v tmux) attach 2>/dev/null
+    /usr/bin/tmux attach 2>/dev/null
 else
-    $(command -v tmux) new-session #-n "$($(command -v id) -un)@$($(command -v hostname))"
+    /usr/bin/tmux new-session #-n "$(/usr/bin/id -un)@$(/bin/hostname)"
 fi

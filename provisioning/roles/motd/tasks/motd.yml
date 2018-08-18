@@ -47,7 +47,7 @@
     - motd
 
 - name: rename directory content
-  shell: "$(command -v mv) motd motd.bak"
+  shell: "/bin/mv motd motd.bak"
   args:
     chdir: "/etc/"
     creates: "/etc/motd.bak"
@@ -100,7 +100,7 @@
     - motd
 
 - name: rename directory content
-  shell: "$(command -v mv) {{ item.path | quote }} {{ item.path | quote }}.bak"
+  shell: "/bin/mv {{ item.path | quote }} {{ item.path | quote }}.bak"
   with_items:
     - "{{ DYNAMIC_MOTD_DIRECTORY_CONTENT.files }}"
   when:

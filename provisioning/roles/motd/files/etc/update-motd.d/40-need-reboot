@@ -16,11 +16,12 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(grep needrestart reboot shutdown)
+command_list=(grep needrestart reboot shutdown unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"
     do
+        unalias ${current_command} 2>/dev/null
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
             echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
@@ -32,9 +33,9 @@ checkCommands()
 checkCommands
 
 DEBIAN_FRONTEND="noninteractive"
-need_reboot=$(echo | $(command -v needrestart) -vnk 2>/dev/null | $(command -v grep) "Pending kernel upgrade")
+need_reboot=$(echo | /usr/sbin/needrestart -vnk 2>/dev/null | /bin/grep "Pending kernel upgrade")
 
 if [[ -n "${need_reboot}" ]]
 then
-    echo -e "\e[01;31mpending kernel upgrade:\e[0m \e[01;31;5ma reboot is required to use a newly installed kernel!\e[0m \e[01;31m(execute as root: $(command -v reboot))\e[0m"
+    echo -e "\e[01;31mpending kernel upgrade:\e[0m \e[01;31;5ma reboot is required to use a newly installed kernel!\e[0m \e[01;31m(execute as root: /sbin/reboot)\e[0m"
 fi

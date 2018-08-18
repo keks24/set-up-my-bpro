@@ -52,4 +52,4 @@
     enabled: "no"
 
 - name: handler_reexport_nfs-kernel-server
-  shell: "$(command -v exportfs) -r"
+  shell: "/usr/sbin/exportfs -r"

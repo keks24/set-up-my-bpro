@@ -35,7 +35,7 @@
 
 # pipelining has to be deactivated here
 - name: let neovim install vundle plugins
-  shell: "$(command -v nvim) +PluginUpdate +qall"
+  shell: "/usr/bin/nvim +PluginUpdate +qall"
   vars:
     ansible_ssh_pipelining: "no"
   ignore_errors: "yes"

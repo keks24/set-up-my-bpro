@@ -52,4 +52,4 @@
     enabled: "no"
 
 - name: handler_check_apache
-  shell: "$(command -v apache2ctl) configtest"
+  shell: "/usr/sbin/apache2ctl configtest"

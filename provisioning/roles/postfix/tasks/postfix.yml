@@ -76,7 +76,7 @@
     - postfix
 
 - name: create hash database file
-  shell: "$(command -v postmap) header_checks"
+  shell: "/usr/sbin/postmap header_checks"
   args:
     chdir: "/etc/postfix/"
     creates: "header_checks.db"
@@ -100,7 +100,7 @@
     - postfix
 
 - name: create hash database file
-  shell: "$(command -v postmap) sasl_passwd"
+  shell: "/usr/sbin/postmap sasl_passwd"
   args:
     chdir: "/etc/postfix/sasl/"
     creates: "sasl_passwd.db"

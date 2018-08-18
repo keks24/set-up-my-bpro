@@ -143,7 +143,7 @@
     - aria2c
 
 - name: copy repository content
-  shell: "$(command -v cp) -R * /var/www/{{ DOMAIN_NAME | quote }}/htdocs/"
+  shell: "/bin/cp -R * /var/www/{{ DOMAIN_NAME | quote }}/htdocs/"
   args:
     chdir: "/usr/local/share/git/webui-aria2/"
     creates: "/var/www/{{ DOMAIN_NAME }}/htdocs/LICENCE"
