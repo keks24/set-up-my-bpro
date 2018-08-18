@@ -36,5 +36,5 @@ script_directory_path=$(/usr/bin/dirname ${0})
 script_name=$(/usr/bin/basename ${0})
 vhost_directory_path="/var/www/{{ WWW_PREFIX }}{{ DOMAIN_NAME }}"
 
-/usr/bin/logger --tag "set vhost rights" --id --stderr "${script_directory_path}/${script_name}: executed"
+/usr/bin/logger --tag "set vhost rights ({{ WWW_PREFIX }}{{ DOMAIN_NAME }})" --id --stderr "${script_directory_path}/${script_name}: executed"
 /bin/chown --recursive {{ APACHE_USERNAME }}:{{ APACHE_USERNAME }} ${vhost_directory_path}/*
