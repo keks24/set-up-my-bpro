@@ -55,10 +55,10 @@
       tags:
         - pre_tasks
 
-    - name: check, if root password has been already set
+    - name: check, if password for user "root" has been already set
       stat:
-        path: "/usr/local/etc/.ansible_dotfile_switches/root_password_set"
-      register: "ROOT_PASSWORD_SET"
+        path: "/usr/local/etc/.ansible_dotfile_switches/root_user_password_set"
+      register: "ROOT_USER_PASSWORD_SET"
       tags:
         - pre_tasks
 
@@ -69,19 +69,26 @@
         password: "{{ lookup('password', '/home/vagrant/credentials/password_super_user_root chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
         state: "present"
       when:
-        - ROOT_PASSWORD_SET.stat.exists == false
+        - ROOT_USER_PASSWORD_SET.stat.exists == false
       tags:
         - pre_tasks
 
     - name: create indicator
       file:
-        path: "/usr/local/etc/.ansible_dotfile_switches/root_password_set"
+        path: "/usr/local/etc/.ansible_dotfile_switches/root_user_password_set"
         owner: "root"
         group: "staff"
         mode: "0644"
         state: "touch"
       when:
-        - ROOT_PASSWORD_SET.stat.exists == false
+        - ROOT_USER_PASSWORD_SET.stat.exists == false
+      tags:
+        - pre_tasks
+
+    - name: check, if password for user "ansible" has been already set
+      stat:
+        path: "/usr/local/etc/.ansible_dotfile_switches/ansible_user_password_set"
+      register: "ANSIBLE_USER_PASSWORD_SET"
       tags:
         - pre_tasks
 
@@ -89,6 +96,8 @@
       group:
         name: "ansible"
         state: "present"
+      when:
+        - ANSIBLE_USER_PASSWORD_SET.stat.exists == false
       tags:
         - pre_tasks
 
@@ -98,6 +107,7 @@
         name: "ansible"
         group: "ansible"
         groups:
+          - "ssh"
           - "sudo"
         password: "{{ lookup('password', '/home/vagrant/credentials/password_privileged_user_ansible chars=ascii_letters,digits,hexdigits,punctuation') | password_hash('sha512') }}"
         shell: "/bin/bash"
@@ -106,6 +116,8 @@
         create_home: "yes"
         append: "yes"
         state: "present"
+      when:
+        - ANSIBLE_USER_PASSWORD_SET.stat.exists == false
       tags:
         - pre_tasks
 
@@ -115,6 +127,20 @@
         key: "{{ VAULT_ANSIBLE_SSH_PUBLIC_KEY }}"
         exclusive: "yes"
         state: "present"
+      when:
+        - ANSIBLE_USER_PASSWORD_SET.stat.exists == false
+      tags:
+        - pre_tasks
+
+    - name: create indicator
+      file:
+        path: "/usr/local/etc/.ansible_dotfile_switches/ansible_user_password_set"
+        owner: "root"
+        group: "staff"
+        mode: "0644"
+        state: "touch"
+      when:
+        - ANSIBLE_USER_PASSWORD_SET.stat.exists == false
       tags:
         - pre_tasks
 
