@@ -731,17 +731,17 @@ nnoremap U :redo<cr>
 nnoremap <silent> <f3> :set hlsearch!<cr>
 
 " set and color column, highlight overlength characters (only insert mode)
-highlight ColorColumn ctermfg=white ctermbg=red guibg=lightred
-highlight OverLength ctermfg=white ctermbg=red guibg=lightred
+highlight ColorColumn ctermfg=white ctermbg=darkgrey guibg=darkgrey
+highlight OverLength ctermfg=white ctermbg=darkgrey guibg=darkgrey
 if exists("&colorcolumn")
     autocmd InsertEnter * set colorcolumn=80
     autocmd InsertLeave * set colorcolumn=""
     " highlight overlength
-    autocmd InsertEnter * match OverLength /\%81v.\+/
+    autocmd InsertEnter * match OverLength /\%80v.\+/
     autocmd InsertLeave * match OverLength //
 endif
 
 " colourise cursor line
 highlight CursorLine ctermbg=black guibg=lightgrey
 " toggle cursor highlighting
-nnoremap <f4> :set cursorline! cursorcolumn!<cr>
+nnoremap <silent> <f4> :set cursorline! cursorcolumn!<cr>
