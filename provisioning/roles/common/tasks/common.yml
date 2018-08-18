@@ -23,6 +23,7 @@
       - "cronolog"
       - "dnsutils"
       - "file"
+      - "gawk"
       - "git"
       - "hdparm"
       - "htop"
