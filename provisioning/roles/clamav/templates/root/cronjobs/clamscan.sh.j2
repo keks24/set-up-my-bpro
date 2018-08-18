@@ -37,5 +37,5 @@ script_name=$(/usr/bin/basename ${0})
 infected_files_directory_path="{{ INFECTED_FILES_DIRECTORY }}/"
 log_file="/var/log/clamav/clamscan.log"
 
-/usr/bin/logger --stderr "${directory_path}/${script_name}: executed"
+/usr/bin/logger --tag "clamscan" --id --stderr "${script_directory_path}/${script_name}: executed"
 /usr/bin/clamscan --recursive --infected --move="${infected_files_directory_path}" --log="${log_file}" "/"
