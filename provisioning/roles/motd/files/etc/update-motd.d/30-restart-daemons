@@ -21,10 +21,10 @@ checkCommands()
 {
     for current_command in "${command_list[@]}"
     do
-        unalias
+        unalias ${current_command} 2>/dev/null
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
-            echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
+            /bin/echo -e "\e[01;31mCould not find command '${current_command}'.\e[0m"
             exit 1
         fi
     done
@@ -37,5 +37,5 @@ restart_daemon_count=$(/usr/sbin/needrestart -vnlr l 2>/dev/null | /bin/grep -c 
 
 if (( ${restart_daemon_count} > 0 ))
 then
-    echo -e "\e[01;31;5m[${restart_daemon_count}] daemons are still using old libraries and need to be restarted!\e[0m \e[01;31m(execute as root: /usr/sbin/needrestart)\e[0m"
+    /bin/echo -e "\e[01;31;5m[${restart_daemon_count}] daemons are still using old libraries and need to be restarted!\e[0m \e[01;31m(execute as root: /usr/sbin/needrestart)\e[0m"
 fi

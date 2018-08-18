@@ -16,8 +16,24 @@
 # limitations under the License.                                            #
 #############################################################################
 
-script_directory_path=$($(command -v dirname) ${0})
-script_name=$($(command -v basename) ${0})
+command_list=(basename chown dirname logger unalias)
+checkCommands()
+{
+    for current_command in "${command_list[@]}"
+    do
+        unalias ${current_command} 2>/dev/null
+        if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
+        then
+            /bin/echo -e "\e[01;31mCould not find command '${current_command}'.\e[0m"
+            exit 1
+        fi
+    done
+}
+
+checkCommands
+
+script_directory_path=$(/usr/bin/dirname ${0})
+script_name=$(/usr/bin/basename ${0})
 infected_files_directory_path="{{ INFECTED_FILES_DIRECTORY }}/"
 log_file="/var/log/clamav/clamscan.log"
 

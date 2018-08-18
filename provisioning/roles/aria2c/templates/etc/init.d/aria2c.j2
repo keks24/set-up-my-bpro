@@ -37,19 +37,19 @@ GROUP="{{ APACHE_USERNAME }}"
 
 if ! [[ -f "${ARIA2C}" ]]
 then
-    echo -e "\e[01;31mCould not find binary file: ${ARIA2C}\e[0m"
+    /bin/echo -e "\e[01;31mCould not find binary file: ${ARIA2C}\e[0m"
     exit 0
 fi
 
 if ! [[ -f "${CONF}" ]]
 then
-    echo -e "\e[01;31mCould not find configuration file: ${CONF}\e[0m"
+    /bin/echo -e "\e[01;31mCould not find configuration file: ${CONF}\e[0m"
     exit 0
 fi
 
 source "/lib/lsb/init-functions"
 
-echo "${PIDFILE}"
+/bin/echo "${PIDFILE}"
 
 case "$1" in
     start)

@@ -24,7 +24,7 @@ checkCommands()
         unalias ${current_command} 2>/dev/null
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
-            echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
+            /bin/echo -e "\e[01;31mCould not find command '${current_command}'.\e[0m"
             exit 1
         fi
     done
@@ -37,10 +37,10 @@ removable_package_count=$(/usr/bin/apt-get --simulate --quiet=2 autoremove | /us
 
 if (( ${removable_package_count} > 0 ))
 then
-    echo -e "\e[01;33m[${removable_package_count}] dependency packages are not needed anymore! (execute as root: /usr/bin/apt-get autoremove)\e[0m"
+    /bin/echo -e "\e[01;33m[${removable_package_count}] dependency packages are not needed anymore! (execute as root: /usr/bin/apt-get autoremove)\e[0m"
 fi
 
 if (( ${upgradeable_package_count} > 0 ))
 then
-    echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: /usr/bin/apt-get) upgrade)\e[0m"
+    /bin/echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: /usr/bin/apt-get) upgrade)\e[0m"
 fi

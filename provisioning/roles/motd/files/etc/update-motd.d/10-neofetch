@@ -21,10 +21,10 @@ checkCommands()
 {
     for current_command in "${command_list[@]}"
     do
-        unalias ${current_command}
+        unalias ${current_command} 2>/dev/null
         if [[ ! $(command -v ${current_command} 2>/dev/null) ]]
         then
-            echo -e "\e[01;31mcould not find command '${current_command}'.\e[0m"
+            /bin/echo -e "\e[01;31mCould not find command '${current_command}'.\e[0m"
             exit 1
         fi
     done
