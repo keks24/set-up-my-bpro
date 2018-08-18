@@ -21,5 +21,8 @@ if [[ $(/usr/bin/pgrep -u "$(/usr/bin/id -un)" "tmux") ]]
 then
     /usr/bin/tmux attach 2>/dev/null
 else
-    /usr/bin/tmux new-session #-n "$(/usr/bin/id -un)@$(/bin/hostname)"
+    if [[ ! $(/usr/bin/pgrep -u "$(/usr/bin/id -un)" "script") ]]
+    then
+        /usr/bin/tmux new-session #-n "$(/usr/bin/id -un)@$(/bin/hostname)"
+    fi
 fi
