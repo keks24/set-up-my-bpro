@@ -70,6 +70,7 @@ source "/usr/local/share/git/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting
 # aliases
 alias aria2c="aria2c -s 4 -x 8"
 alias dd="dd bs=64K status=progress"
+alias diff="diff -Nur --color"
 alias growisofs="growisofs -dvd-compat"
 alias halt="echo 'Are you sure? Please run: /sbin/halt'"
 alias history="history -i"
