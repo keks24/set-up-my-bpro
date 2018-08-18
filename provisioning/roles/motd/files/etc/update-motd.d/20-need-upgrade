@@ -16,7 +16,7 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(apt-get awk sort wc unalias)
+command_list=(apt-get awk echo sort wc unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"

@@ -16,7 +16,7 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(neofetch unalias)
+command_list=(echo neofetch unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"

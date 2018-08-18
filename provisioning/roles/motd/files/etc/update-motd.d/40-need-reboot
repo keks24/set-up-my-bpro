@@ -16,7 +16,7 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(grep needrestart reboot shutdown unalias)
+command_list=(echo grep needrestart reboot shutdown unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"
