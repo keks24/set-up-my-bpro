@@ -101,7 +101,7 @@
     user: "root"
     state: "present"
   with_items:
-    - { CRONJOB_NAME: "update unofficial clamav virus signature database every day",
+    - { CRONJOB_NAME: "update unofficial clamav virus signature database every day at 5am",
         CRONJOB_MINUTE: "0",
         CRONJOB_HOUR: "5",
         CRONJOB_DAY: "*",

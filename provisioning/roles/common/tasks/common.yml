@@ -64,7 +64,7 @@
 
 - name: set up cronjob for file database update
   cron:
-    name: "update file database every day"
+    name: "update file database every day at 12am"
     minute: "0"
     hour: "0"
     day: "*"
