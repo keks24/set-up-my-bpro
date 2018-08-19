@@ -32,7 +32,7 @@
     - netselect-apt
 
 - name: find fastest mirror
-  shell: "/usr/bin/netselect-apt {{ CURRENT_STABLE_CODENAME | quote }} -n"
+  shell: "/usr/bin/netselect-apt {{ CURRENT_STABLE_CODENAME | quote }} --nonfree"
   args:
     chdir: "/tmp/"
     creates: "/tmp/sources.list"
