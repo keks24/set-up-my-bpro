@@ -16,7 +16,7 @@
 # limitations under the License.                                            #
 #############################################################################
 
-command_list=(apt-get awk echo sort wc unalias)
+command_list=(apt apt-get awk echo sort wc unalias)
 checkCommands()
 {
     for current_command in "${command_list[@]}"
@@ -32,7 +32,7 @@ checkCommands()
 
 checkCommands
 
-upgradeable_package_count=$(/usr/bin/apt-get --simulate --quiet=2 upgrade | /usr/bin/awk '{ print $2 }' | /usr/bin/sort -u | /usr/bin/wc -l)
+upgradeable_package_count=$(( $(/usr/bin/apt list --upgradeable | /usr/bin/wc -l) -1 ))
 removable_package_count=$(/usr/bin/apt-get --simulate --quiet=2 autoremove | /usr/bin/awk '{ print $2 }' | /usr/bin/sort -u | /usr/bin/wc -l)
 
 if (( ${removable_package_count} > 0 ))
