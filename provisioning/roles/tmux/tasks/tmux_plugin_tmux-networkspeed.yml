@@ -15,35 +15,34 @@
 # limitations under the License.                                            #
 #############################################################################
 
-- import_tasks: "tmux_global.yml"
+- name: clone tmux-networkspeed repository
+  git:
+    repo: "https://github.com/keks24/tmux-networkspeed"
+    dest: "/usr/local/share/git/tmux/tmux-networkspeed/"
+    force: "yes"
   tags:
     - tmux
 
-# custom - 20180618 - rfischer: do not install "tmux-mem-cpu-load". keep it for educational purposes
-#- import_tasks: "tmux_plugin_tmux-mem-cpu-load.yml"
-#  tags:
-#    - tmux
-
-- import_tasks: "tmux_plugin_tmux-resurrect.yml"
+- name: correct owner and group rights
+  file:
+    path: "/usr/local/share/git/tmux/tmux-networkspeed/"
+    owner: "root"
+    group: "staff"
+    recurse: "yes"
+    state: "directory"
   tags:
     - tmux
 
-- import_tasks: "tmux_plugin_wemux.yml"
-  tags:
-    - tmux
-
-- import_tasks: "tmux_plugin_tmux-networkspeed.yml"
-  tags:
-    - tmux
-
-- include_tasks: "tmux_root.yml"
-  when:
-    - USERNAME == "root"
-  tags:
-    - tmux
-
-- include_tasks: "tmux_other_user.yml"
-  when:
-    - USERNAME != "root"
+- name: copy binary files
+  copy:
+    src: "/usr/local/share/git/tmux/tmux-networkspeed/{{ item }}"
+    dest: "/usr/local/bin/tmux_{{ item }}"
+    owner: "root"
+    group: "staff"
+    mode: "0755"
+    remote_src: "yes"
+  with_items:
+    - "downspeed"
+    - "upspeed"
   tags:
     - tmux
