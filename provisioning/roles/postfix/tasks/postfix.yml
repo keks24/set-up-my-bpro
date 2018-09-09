@@ -17,7 +17,9 @@
 
 - name: install mail transfer agent (postfix)
   package:
-    name: "postfix"
+    name:
+      - "postfix"
+      - "libsasl2-modules"
     cache_valid_time: "{{ CACHE_VALID_TIME }}"
     update_cache: "yes"
     state: "{{ PACKAGE_STATE }}"
