@@ -42,5 +42,5 @@ fi
 
 if (( ${upgradeable_package_count} > 0 ))
 then
-    /bin/echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: /usr/bin/apt-get) upgrade)\e[0m"
+    /bin/echo -e "\e[01;31;5m[${upgradeable_package_count}] packages still need to be upgraded!\e[0m \e[01;31m(execute as root: /usr/bin/apt-get upgrade)\e[0m"
 fi
