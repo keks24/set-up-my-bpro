@@ -53,7 +53,58 @@ zshaddhistory()
 ## generate strong passwords with ~130 bit entropy
 genpw()
 {
-    strings -n 1 < /dev/urandom | tr -d '[:space:]' | head -c "${1}"
+    local -i password_length=20
+    local remove_characters="[:space:]"
+
+    while [[ "${#}" ]]
+    do
+        case "${1}" in
+            "-a" | "--no-lowercase")
+                remove_characters+="a-z"
+                ;;
+
+            "-A" | "--no-uppercase")
+                remove_characters+="A-Z"
+                ;;
+
+            "-n" | "--no-numbers")
+                remove_characters+="0-9"
+                ;;
+
+            "-s" | "--no-special")
+                remove_characters+="[:punct:]"
+                ;;
+
+            "-l" | "--length")
+                password_length="${2}"
+                shift
+                ;;
+
+            "-h" | "--help")
+                echo ""
+                echo "Usage: ${0} [options] <arguments>"
+                echo ""
+                echo "OPTIONS:"
+                echo "  -a, --no-lowercase              exclude lowercase characters"
+                echo "  -A, --no-uppercase              excluce uppercase characters"
+                echo "  -n, --no-numbers                exclude numeric characters"
+                echo "  -s, --no-special                exclude special characters"
+                echo "  -l, --length <password_length>  define password length"
+                echo "  -h, --help                      show this message"
+                echo ""
+                echo "EXAMPLES:"
+                echo "  generate a password with 24 characters"
+                echo "      ${0} --length 24"
+                echo ""
+                echo "  exclude special and uppercase characters"
+                echo "      ${0} --no-special --no-uppercase"
+                return 0
+        esac
+        shift 1 >/dev/null 2>&1 || break
+    done
+
+    # must be echoed because of a trailing percent sign
+    echo $(strings --bytes=1 < /dev/urandom | tr --delete "${remove_characters}" | head --bytes="${password_length}")
 }
 
 # prompt shell
