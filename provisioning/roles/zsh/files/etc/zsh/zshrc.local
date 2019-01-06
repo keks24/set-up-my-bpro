@@ -53,8 +53,10 @@ zshaddhistory()
 ## generate strong passwords with ~130 bit entropy
 genpw()
 {
+    # define default variables
     local -i password_length=20
     local remove_characters="[:space:]"
+    local -i password_count=20
 
     while [[ "${#}" ]]
     do
@@ -67,17 +69,22 @@ genpw()
                 remove_characters+="A-Z"
                 ;;
 
+            "-c" | "--count")
+                password_count="${2}"
+                shift
+                ;;
+
+            "-l" | "--length")
+                password_length="${2}"
+                shift
+                ;;
+
             "-n" | "--no-numbers")
                 remove_characters+="0-9"
                 ;;
 
             "-s" | "--no-special")
                 remove_characters+="[:punct:]"
-                ;;
-
-            "-l" | "--length")
-                password_length="${2}"
-                shift
                 ;;
 
             "-h" | "--help")
@@ -87,9 +94,10 @@ genpw()
                 echo "OPTIONS:"
                 echo "  -a, --no-lowercase              exclude lowercase characters"
                 echo "  -A, --no-uppercase              excluce uppercase characters"
+                echo "  -c, --count <number>            define the amount of generated passwords"
+                echo "  -l, --length <number>           define password length"
                 echo "  -n, --no-numbers                exclude numeric characters"
                 echo "  -s, --no-special                exclude special characters"
-                echo "  -l, --length <password_length>  define password length"
                 echo "  -h, --help                      show this message"
                 echo ""
                 echo "EXAMPLES:"
@@ -103,9 +111,11 @@ genpw()
         shift 1 >/dev/null 2>&1 || break
     done
 
-    # must be echoed because of a trailing percent sign
-    strings --bytes=1 /dev/urandom | tr --delete "${remove_characters}" | head --bytes="${password_length}"
-    echo ""
+    for i in {1..${password_count}}
+    do
+        strings --bytes=1 /dev/urandom | tr --delete "${remove_characters}" | head --bytes="${password_length}"
+        echo ""
+    done
 }
 
 # prompt shell
