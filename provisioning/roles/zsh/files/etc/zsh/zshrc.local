@@ -107,6 +107,11 @@ genpw()
                 echo "  exclude special and uppercase characters"
                 echo "      ${0} --no-special --no-uppercase"
                 return 0
+                ;;
+
+            *)
+                ${0} --help
+                return 0
         esac
         shift 1 >/dev/null 2>&1 || break
     done
