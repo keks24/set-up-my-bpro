@@ -50,6 +50,12 @@ zshaddhistory()
     whence ${${(z)1}[1]} >| /dev/null || return 1
 }
 
+## generate strong passwords with ~130 bit entropy
+genpw()
+{
+    strings -n 1 < /dev/urandom | tr -d '[:space:]' | head -c "${1}"
+}
+
 # prompt shell
 ## colour
 if [[ $(id -u) == 0 ]]
