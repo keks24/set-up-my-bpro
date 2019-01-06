@@ -104,7 +104,8 @@ genpw()
     done
 
     # must be echoed because of a trailing percent sign
-    echo $(strings --bytes=1 /dev/urandom | tr --delete "${remove_characters}" | head --bytes="${password_length}")
+    strings --bytes=1 /dev/urandom | tr --delete "${remove_characters}" | head --bytes="${password_length}"
+    echo ""
 }
 
 # prompt shell
