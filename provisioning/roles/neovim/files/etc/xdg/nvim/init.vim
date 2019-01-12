@@ -113,8 +113,8 @@
   set bs=2 fo=cqrt ls=2 shm=at ww=<,>,h,l
 " set bs=2 fo=cqrt ls=2 shm=at tw=72 ww=<,>,h,l
 " set comments=b:",:%,fb:-,n:>,n:)
-  set list listchars=tab:»·,trail:·
-  set listchars=eol:¬,precedes:«,extends:»,tab:»·,trail:·
+" set list listchars=tab:»·,trail:·
+" set listchars=eol:¬,precedes:«,extends:»,tab:»·,trail:·
   set viminfo=%,'50,\"100,:100,n~/.viminfo
   set tags=./tags,./TAGS,tags,TAGS,../tags,../../tags,../../../tags,../../../../tags
 
