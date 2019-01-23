@@ -58,7 +58,7 @@ genpw()
     local remove_characters="[:space:]"
     local -i password_count=20
 
-    while [[ "${#}" ]]
+    while (( ${#} ))
     do
         case "${1}" in
             "-a" | "--no-lowercase")
