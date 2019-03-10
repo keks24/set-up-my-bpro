@@ -49,6 +49,7 @@
       - "pigz"
       - "pixz"
       - "psmisc"
+      - "rename"
       - "rsync"
       - "smartmontools"
       - "source-highlight"
