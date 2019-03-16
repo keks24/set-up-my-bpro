@@ -114,6 +114,7 @@
     owner: "root"
     group: "root"
     mode: "0644"
+    validate: "/sbin/logrotate --debug %s"
   tags:
     - aria2c
 
