@@ -84,7 +84,7 @@
   file:
     path: "/var/log/clamav/clamscan.log"
     owner: "{{ LOGROTATE_USERNAME }}"
-    group: "{{ LOGROTATE_GROUP }}"
+    group: "{{ LOGROTATE_GROUPNAME }}"
     mode: "0640"
     state: "touch"
   tags:

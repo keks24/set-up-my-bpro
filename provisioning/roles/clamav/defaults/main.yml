@@ -25,4 +25,4 @@ INFECTED_FILES_DIRECTORY: "/usr/local/etc/clamav/infected_files/"
 
 # logrotate settings
 LOGROTATE_USERNAME: "clamav"
-LOGROTATE_GROUP: "adm"
+LOGROTATE_GROUPNAME: "adm"
