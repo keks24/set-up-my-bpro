@@ -171,6 +171,9 @@ export LESS="--RAW-CONTROL-CHARS --LONG-PROMPT --shift 5"
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 ## do not include critical commands in history
 export HISTORY_IGNORE="(/sbin/halt*|/sbin/poweroff*|/sbin/reboot*|/sbin/shutdown*|cd*|clear*|exit*|halt*|ls*|poweroff*|pwd*|reboot*|rm*|shutdown*|sudo*)"
+## define installation directories for rust packages
+export CARGO_HOME="/usr/local/src/rust/cargo"
+export RUSTUP_HOME="/usr/local/src/rust/multirust"
 
 # output when opening shell
 ## list who is logged in
