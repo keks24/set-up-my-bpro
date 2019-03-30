@@ -120,7 +120,7 @@ genpw()
 
 # prompt shell
 ## colour
-if [[ $(id -u) == 0 ]]
+if [[ $(id --user) == 0 ]]
 then
     zstyle ':prompt:grml:*:items:user' pre '%F{yellow}'
 else
@@ -162,7 +162,7 @@ alias shutdown="echo 'Are you sure? Please run: /sbin/shutdown'"
 export EDITOR="nvim"
 export VISUAL="nvim"
 ## location for x cache
-export XDG_CACHE_HOME="/tmp/$(id -un)/.cache/"
+export XDG_CACHE_HOME="/tmp/$(id --user --name)/.cache/"
 ## set colours for hard and orphaned symlinks
 export LS_COLORS="mh=44;37:or=40;31;01"
 ## less: enable syntax highlighting
