@@ -109,7 +109,7 @@
 
 - name: set up logrotate
   template:
-    src: "templates/etc/logrotate.d/aria2.j2"
+    src: "templates/etc/logrotate.d/aria2c.j2"
     dest: "/etc/logrotate.d/aria2"
     owner: "root"
     group: "root"
