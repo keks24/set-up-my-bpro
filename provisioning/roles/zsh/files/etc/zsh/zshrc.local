@@ -139,7 +139,7 @@ source "/usr/local/share/git/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting
 alias aria2c="aria2c --min-split-size=20M --split=8 --max-connection-per-server=8"
 alias dd="dd bs=64K status=progress"
 alias diff="diff --new-file --unified=3 --recursive --color"
-alias growisofs="growisofs -dvd-compat"
+alias growisofs="growisofs -speed=1"
 alias halt="echo 'Are you sure? Please run: /sbin/halt'"
 alias history="history -i"
 alias ip="ip --color"
