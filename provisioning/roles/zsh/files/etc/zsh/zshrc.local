@@ -118,6 +118,22 @@ genpw()
     done
 }
 
+## notfiy after a command has finished
+## usage: notifyme some_command
+notifyme()
+{
+    local -i start_time="$(date +%s)"
+
+    "${@}"
+
+    end_time="$(date +%s)"
+    total_execution_time="$(( end_time - start_time ))"
+    #if (( total_execution_time >= 15 ))
+    #then
+        notify-send --app-name=Notification --icon=notifications --urgency=critical "Command finished [${total_execution_time} seconds]" "'$(echo ${@})'"
+    #fi
+}
+
 # prompt shell
 ## colour
 if [[ $(id --user) == 0 ]]
@@ -154,8 +170,8 @@ alias path="echo ${PATH//:/'\n'}"
 alias poweroff="echo 'Are you sure? Please run: /sbin/poweroff'"
 alias reboot="echo 'Are you sure? Please run: /sbin/reboot'"
 alias rsync="rsync --archive --hard-links --acls --xattrs --one-file-system --numeric-ids --info=progress2 --rsh='ssh -T -c aes256-gcm@openssh.com -o Compression=no -x'"
-alias tree="tree -F"
 alias shutdown="echo 'Are you sure? Please run: /sbin/shutdown'"
+alias tree="tree -F"
 
 # export
 ## set default text editor
