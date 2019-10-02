@@ -152,7 +152,7 @@ source "/usr/local/share/git/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "/usr/local/share/git/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # aliases
-alias aria2c="aria2c --min-split-size=20M --split=8 --max-connection-per-server=8"
+alias aria2c="aria2c --force-sequential=true --min-split-size=20M --split=8 --max-connection-per-server=8"
 alias dd="dd bs=64K status=progress"
 alias diff="diff --new-file --unified=3 --recursive --color"
 alias growisofs="growisofs -speed=1"
