@@ -1,13 +1,13 @@
 # ansible
 ## ignore retry files
-*.retry
+/*.retry
 ## ignore vault password file
-.vault_pass
+/.vault_pass
 ## ignore deploy to live switch
-.deploy_to_live
+/.deploy_to_live
 ## ignore credentials file
-provisioning/group_vars/credentials.yml
+/provisioning/group_vars/credentials.yml
 
 # vagrant
 ## ignore vm configuration files
-.vagrant
+/.vagrant/
